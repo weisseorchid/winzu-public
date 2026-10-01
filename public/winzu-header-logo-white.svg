@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 300" role="img" aria-label="WINZU">
+  <g fill="#fff" transform="translate(12 0)">
+    <path d="M86 104 112 108 78 210 62 228 53 207Z M144 108 170 104 203 207 194 228 178 210Z"/>
+    <path d="M96 83 106 68 120 62 136 62 150 68 160 83Z"/>
+    <path d="M55 76 201 79 201 86 55 83Z M59 89 197 92 197 99 59 96Z M66 102 190 105 190 112 66 109Z"/>
+  </g>
+  <text x="254" y="190" fill="#fff" font-family="Segoe UI, Arial, sans-serif" font-size="126" font-weight="400" letter-spacing="9">WINZU</text>
+</svg>
