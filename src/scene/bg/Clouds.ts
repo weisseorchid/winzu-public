@@ -1,5 +1,7 @@
 import * as THREE from 'three'
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { COLORS, FOG } from '../config'
+import { disposeObject3D } from '../dispose'
 import { bindSkyUniforms, withSharedGlsl } from '../glsl/includes'
 
 type Lobe = {
@@ -180,7 +182,7 @@ function buildLobe(
   }
 
   geo.setAttribute('color', new THREE.BufferAttribute(colors, 3))
-  geo.computeVertexNormals()
+  // Vertex colors are baked; fragment shader ignores normals.
   return geo
 }
 
@@ -244,20 +246,32 @@ export function createClouds(sunDir: THREE.Vector3): THREE.Group {
   bindSkyUniforms(mat.uniforms, sunDir, COLORS)
   group.userData.material = mat
 
+  const lobeMatrix = new THREE.Matrix4()
+  const lobePos = new THREE.Vector3()
+  const lobeQuat = new THREE.Quaternion()
+  const lobeScale = new THREE.Vector3(1, 1, 1)
+  const lobeEuler = new THREE.Euler()
+
   for (const bank of BANKS) {
-    const bankGroup = new THREE.Group()
+    const lobeGeos: THREE.BufferGeometry[] = []
     for (const lobe of bank.lobes) {
       const geo = buildLobe(sunDir, bank.warmth, lobe.s)
-      const mesh = new THREE.Mesh(geo, mat)
-      mesh.position.set(...lobe.o)
-      if (lobe.yaw) mesh.rotation.y = lobe.yaw
-      mesh.renderOrder = -78
-      mesh.frustumCulled = false
-      bankGroup.add(mesh)
+      lobePos.set(...lobe.o)
+      lobeEuler.set(0, lobe.yaw ?? 0, 0)
+      lobeQuat.setFromEuler(lobeEuler)
+      lobeMatrix.compose(lobePos, lobeQuat, lobeScale)
+      geo.applyMatrix4(lobeMatrix)
+      lobeGeos.push(geo)
     }
-    bankGroup.position.set(...bank.p)
-    bankGroup.scale.setScalar(bank.scale)
-    group.add(bankGroup)
+    const merged = mergeGeometries(lobeGeos, false)
+    for (const g of lobeGeos) g.dispose()
+    if (!merged) continue
+    const mesh = new THREE.Mesh(merged, mat)
+    mesh.position.set(...bank.p)
+    mesh.scale.setScalar(bank.scale)
+    mesh.renderOrder = -78
+    mesh.frustumCulled = false
+    group.add(mesh)
   }
 
   return group
@@ -272,4 +286,10 @@ export function updateClouds(
   if (!mat?.uniforms) return
   mat.uniforms.uSunDir.value.copy(sunDir)
   if (fogDensity != null) mat.uniforms.uFogDensity.value = fogDensity
+}
+
+/** Dispose merged bank meshes and the shared cloud shader material. */
+export function disposeClouds(group: THREE.Group): void {
+  disposeObject3D(group)
+  group.userData.material = undefined
 }

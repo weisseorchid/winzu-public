@@ -16,6 +16,7 @@
     "shot": "node scripts/shot.mjs",
     "anchors": "node scripts/anchors.mjs",
     "compress-plates": "node scripts/compress-plates.mjs",
+    "generate-og": "node scripts/generate-og.mjs",
     "compress-glb": "node scripts/compress-glb.mjs"
   },
   "dependencies": {
@@ -31,6 +32,9 @@
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@gltf-transform/core": "^4.5.1",
+    "@gltf-transform/extensions": "^4.5.1",
+    "@gltf-transform/functions": "^4.5.1",
     "@types/react": "^19.1.2",
     "@types/react-dom": "^19.1.2",
     "@types/three": "^0.175.0",
@@ -40,6 +44,7 @@
     "eslint-plugin-react-hooks": "^7.1.1",
     "eslint-plugin-react-refresh": "^0.5.7",
     "globals": "^17.12.0",
+    "meshoptimizer": "^1.3.0",
     "playwright": "^1.63.0",
     "prettier": "^3.9.9",
     "sharp": "^0.35.5",

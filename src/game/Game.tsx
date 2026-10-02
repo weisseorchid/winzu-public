@@ -165,9 +165,7 @@ export function Game() {
       />
 
       <div className="game-hud">
-        {state.scene === 'sail' && (
-          <p className="hint-pill">{t.clickHint}</p>
-        )}
+        {state.scene === 'sail' && <p className="hint-pill">{t.clickHint}</p>}
         {state.scene === 'desk' && !state.deskFocus && (
           <p className="hint-pill">{t.deskHint}</p>
         )}

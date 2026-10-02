@@ -44,7 +44,11 @@ export function createRock(opts?: {
     const hz = hash3(seed * 0.7, k * 0.9, 2.4)
     const yBias = k % 2 === 0 ? 0.5 : 1.35
     cleaves.push(
-      new THREE.Vector3(hx * 2 - 1, (hy - 0.35) * yBias, hz * 2 - 1).normalize(),
+      new THREE.Vector3(
+        hx * 2 - 1,
+        (hy - 0.35) * yBias,
+        hz * 2 - 1,
+      ).normalize(),
     )
   }
   cleaves.push(new THREE.Vector3(0.12, 1, 0.06).normalize())

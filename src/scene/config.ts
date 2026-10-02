@@ -113,9 +113,80 @@ export const PERF = {
   reflectionHalfRes: true,
 }
 
-/** Calm low-poly ocean. */
+export type QualityTier = 'high' | 'medium' | 'low'
+
+export type QualityProfile = {
+  tier: QualityTier
+  dprCap: number
+  oceanSegments: number
+  /** Reflection scheduling. */
+  reflection: 'off' | 'everyN'
+  reflectionEveryN: number
+  reflectionHalfRes: boolean
+  bloom: boolean
+  skyWidthSegs: number
+  skyHeightSegs: number
+}
+
+export const QUALITY_PROFILES: Record<QualityTier, QualityProfile> = {
+  high: {
+    tier: 'high',
+    dprCap: 2,
+    oceanSegments: 80,
+    reflection: 'everyN',
+    reflectionEveryN: 1,
+    reflectionHalfRes: true,
+    bloom: true,
+    skyWidthSegs: 32,
+    skyHeightSegs: 18,
+  },
+  medium: {
+    tier: 'medium',
+    dprCap: 1.5,
+    oceanSegments: 48,
+    reflection: 'everyN',
+    reflectionEveryN: 3,
+    reflectionHalfRes: true,
+    bloom: true,
+    skyWidthSegs: 24,
+    skyHeightSegs: 14,
+  },
+  low: {
+    tier: 'low',
+    dprCap: 1.25,
+    oceanSegments: 32,
+    reflection: 'off',
+    reflectionEveryN: 1,
+    reflectionHalfRes: true,
+    bloom: false,
+    skyWidthSegs: 16,
+    skyHeightSegs: 10,
+  },
+}
+
+function isMobileUa(ua: string): boolean {
+  return /Mobi|Android/i.test(ua)
+}
+
+/**
+ * Resolve quality tier: `?quality=high|medium|low` overrides UA.
+ * Invalid/missing query falls through to mobile → low, else high.
+ */
+export function resolveQualityProfile(
+  search: string = typeof location !== 'undefined' ? location.search : '',
+  ua: string = typeof navigator !== 'undefined' ? navigator.userAgent : '',
+): QualityProfile {
+  const raw = new URLSearchParams(search).get('quality')?.toLowerCase()
+  if (raw === 'high' || raw === 'medium' || raw === 'low') {
+    return QUALITY_PROFILES[raw]
+  }
+  return isMobileUa(ua) ? QUALITY_PROFILES.low : QUALITY_PROFILES.high
+}
+
+/** Calm low-poly ocean. Look knobs; segment count comes from QualityProfile. */
 export const OCEAN = {
-  segments: 180,
+  /** Default / high-tier budget (prefer QualityProfile.oceanSegments at runtime). */
+  segments: 80,
   amplitude: 0.14,
   frequency: 0.1,
   speed: 0.55,
@@ -125,17 +196,18 @@ export const OCEAN = {
 /**
  * Procedural boat is the stern-camera mesh (sail sheeted to port).
  * The GLB sail is cut fore-and-aft, so from behind it reads as an edge.
+ * Force procedural with `?proceduralBoat`.
  */
 export const BOAT = {
-  useGlb: false,
+  useGlb: true,
   glbPath: 'renders/stylized_boat_lowpoly.glb',
   /** Target bounding-box width before layout fit (matches procedural hull). */
   targetWidth: 1.1,
 }
 
-/** Lighthouse GLB stays gated until a non-stub asset lands. */
+/** Force procedural with `?proceduralLighthouse`. */
 export const LIGHTHOUSE = {
-  useGlb: false,
+  useGlb: true,
   glbPath: 'renders/stylized_lighthouse_lowpoly.glb',
   targetWidth: 4.2,
 }

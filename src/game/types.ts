@@ -41,8 +41,7 @@ export function forceSceneState(
   scene: SceneId,
   markersTotal: number,
 ): GameState {
-  const markersReached =
-    scene === 'dock' || scene === 'desk' ? markersTotal : 0
+  const markersReached = scene === 'dock' || scene === 'desk' ? markersTotal : 0
   return {
     scene,
     markersReached,

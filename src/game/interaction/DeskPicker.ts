@@ -2,11 +2,14 @@ import type * as THREE from 'three'
 import type { DeskPropId } from '../../scene/props/Desk'
 
 export type DeskIntent =
-  | { kind: 'map' }
-  | { kind: 'doc'; docId: string }
-  | { kind: 'ignore' }
+  { kind: 'map' } | { kind: 'doc'; docId: string } | { kind: 'ignore' }
 
-const DOC_IDS = new Set(['letter_burn', 'letter_renewal', 'letter_copy', 'book'])
+const DOC_IDS = new Set([
+  'letter_burn',
+  'letter_renewal',
+  'letter_copy',
+  'book',
+])
 const KNOWN = new Set([
   'map',
   'letter_burn',

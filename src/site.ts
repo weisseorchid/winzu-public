@@ -1,4 +1,4 @@
-/** Site-level URLs and labels. Replace placeholders before stakeholder demos. */
+/** Live demo contacts and labels (shore CTAs in MapHud). */
 export const site = {
   name: 'Winzu',
   email: 'weisseorchid@gmail.com',

@@ -113,7 +113,15 @@ export function createDeskScene(): DeskHandle {
   pickables.set('letter_burn', letterBurn)
   group.add(letterBurn)
 
-  const letterRenewal = box(0.3, 0.015, 0.38, COLORS.dustyPeach, 0.99, 0.55, 0.35)
+  const letterRenewal = box(
+    0.3,
+    0.015,
+    0.38,
+    COLORS.dustyPeach,
+    0.99,
+    0.55,
+    0.35,
+  )
   letterRenewal.name = 'letter_renewal'
   letterRenewal.userData.deskId = 'letter_renewal'
   pickables.set('letter_renewal', letterRenewal)
@@ -184,17 +192,12 @@ export function createDeskScene(): DeskHandle {
   return { group, pickables, room }
 }
 
-export function setDeskHighlight(
-  obj: THREE.Object3D | undefined,
-  on: boolean,
-) {
+export function setDeskHighlight(obj: THREE.Object3D | undefined, on: boolean) {
   if (!obj) return
   obj.traverse((child) => {
     const mesh = child as THREE.Mesh
     if (!mesh.isMesh) return
-    const mats = Array.isArray(mesh.material)
-      ? mesh.material
-      : [mesh.material]
+    const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
     for (const raw of mats) {
       const mat = raw as THREE.MeshLambertMaterial
       if (!mat || !('emissive' in mat)) continue

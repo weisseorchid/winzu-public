@@ -32,4 +32,6 @@ shots/*
 
 # Assets
 assets/*
+!assets/renders-src/
+!assets/renders-src/**
 public/plates/*

@@ -96,7 +96,10 @@ export function createPier(opts?: {
   crane.name = 'LanternCrane'
   crane.position.set(width * 0.38, 1.2, -length * 0.12)
   group.add(crane)
-  const arm = new THREE.Mesh(new THREE.BoxGeometry(0.75, 0.07, 0.07), darkWood())
+  const arm = new THREE.Mesh(
+    new THREE.BoxGeometry(0.75, 0.07, 0.07),
+    darkWood(),
+  )
   arm.name = 'LanternArm'
   arm.position.set(width * 0.38 - 0.32, 2.05, -length * 0.12)
   group.add(arm)

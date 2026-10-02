@@ -14,7 +14,7 @@ Reviewed:
 
 - `src/game/` — shell, director, boat, scenes, HUD, desk interaction
 - `src/scene/` — props, ocean, sky, foam, lighting, post, reflect, config/layout
-- `scripts/` — shot, anchors, compress stubs
+- `scripts/` — shot, anchors, compress-glb (budgets), compress-plates, generate-og
 - Tooling — Vitest, ESLint, Prettier, GitHub Pages workflow
 - Art docs — [`assets/scene_flow.md`](../assets/scene_flow.md), [`assets/palette_ref.md`](../assets/palette_ref.md)
 
@@ -28,15 +28,15 @@ Out of scope for this review (and intentionally not recommended):
 
 ## Scorecard
 
-| Area | Rating | Notes |
-|------|--------|--------|
-| Architecture | **Warn** | Strong layering; `ExteriorWorld` is a god orchestration blob |
-| Visual language | **Pass** | Flat Lambert props, restrained palette, stylized silhouettes |
-| Performance | **Fail** | Dense ocean, per-frame reflection, unmerged clouds/foam |
-| Assets / pipeline | **Fail** | Compress scripts stubbed; GLB flags off; plates multi-MB |
-| Animation / React | **Warn** | Motion off React state; marker arrival lacks a latch |
-| Interaction | **Pass** | DeskPicker pure; sail input works; cursor side-effect is small |
-| Product / CI | **Warn** | Pages deploy works; CI builds only; demo placeholders remain |
+| Area              | Rating   | Notes                                                                      |
+| ----------------- | -------- | -------------------------------------------------------------------------- |
+| Architecture      | **Warn** | Strong layering; `ExteriorWorld` is a god orchestration blob               |
+| Visual language   | **Pass** | Flat Lambert props, restrained palette, stylized silhouettes               |
+| Performance       | **Fail** | Dense ocean, per-frame reflection, unmerged clouds/foam                    |
+| Assets / pipeline | **Pass** | meshopt + budgets; boat/LH GLB on; plates compressed; girl/pier/desk gated |
+| Animation / React | **Warn** | Motion off React state; marker arrival lacks a latch                       |
+| Interaction       | **Pass** | DeskPicker pure; sail input works; cursor side-effect is small             |
+| Product / CI      | **Pass** | CI gates PRs; Pages deploys after CI; live CTAs in `site.ts`               |
 
 Ratings: **Pass** = protect and extend · **Warn** = fix before scaling · **Fail** = blocks “professional mobile/web” claims.
 
@@ -73,15 +73,15 @@ flowchart TB
   SeaWorld --> Systems
 ```
 
-| Layer | Role | Status |
-|-------|------|--------|
-| App | Brand chrome + locale | Thin — good |
-| Game | `GameState`, scene mount, DOM HUD | Good |
-| SceneDirector | Pure intro→sail→dock→desk FSM | Excellent |
-| SeaWorld | One-shot scenic graph factory | Good |
-| ExteriorScene | Cinematics, sail, post, layout, input | Too large |
-| Scene3Desk | Desk canvas, pick, focus camera | Acceptable |
-| props/* | `createX` + `update` handles | Good |
+| Layer         | Role                                  | Status      |
+| ------------- | ------------------------------------- | ----------- |
+| App           | Brand chrome + locale                 | Thin — good |
+| Game          | `GameState`, scene mount, DOM HUD     | Good        |
+| SceneDirector | Pure intro→sail→dock→desk FSM         | Excellent   |
+| SeaWorld      | One-shot scenic graph factory         | Good        |
+| ExteriorScene | Cinematics, sail, post, layout, input | Too large   |
+| Scene3Desk    | Desk canvas, pick, focus camera       | Acceptable  |
+| props/*       | `createX` + `update` handles          | Good        |
 
 ---
 
@@ -196,29 +196,23 @@ Severity: **P0** ship-blocking cost or correctness · **P1** architecture / draw
 
 **Why bad:** CPU geometry work every frame for a decorative sail. Belongs in a vertex shader (rest position + time).
 
-### P1 — Incomplete SeaWorld dispose
+### P1 — Incomplete SeaWorld dispose — **resolved (Phase 4)**
 
-**Where:** Exterior unmount disposes composer + reflection only — not ocean/rocks/clouds geos & materials.
+**Where:** Exterior unmount previously disposed composer + reflection only.
 
-**Why bad:** Exterior↔desk remounts a second Canvas; leaked GPU resources accumulate.
+**Fix landed:** `disposeObject3D` + `disposeSeaWorld`; foam/boat/cloud handle dispose; Exterior cleanup calls both post + scenic dispose. Dual Canvas kept; remount cost documented in README.
 
-**Fix direction:** `disposeSeaWorld` traverse dispose geo/mat/texture; call from cleanup.
+### P1 — Dual always-on Canvases — **partially resolved (Phase 4)**
 
-### P1 — Dual always-on Canvases
+**Where:** Separate `Canvas` in Exterior and Desk.
 
-**Where:** Separate `Canvas` in Exterior and Desk; both `frameloop="always"`.
+**Fix landed:** Desk `frameloop="demand"` + invalidate on pointer/focus/camera blend. Exterior stays `always`. Single-Canvas refactor deferred.
 
-**Why bad:** Context recreate + shader recompile on dock→desk; no demand-idle when quiet.
+### P2 — Asset pipeline — **resolved (Phase 5)**
 
-**Fix direction:** Prefer one Canvas + scene-root swap; or document remount cost and use `demand` + invalidate where interaction-driven.
+**Where:** [`scripts/compress-glb.mjs`](../scripts/compress-glb.mjs); [`compress-plates.mjs`](../scripts/compress-plates.mjs) / [`generate-og.mjs`](../scripts/generate-og.mjs); Lambert normalize + MeshoptDecoder on load.
 
-### P2 — Asset pipeline aspirational
-
-**Where:** [`scripts/compress-glb.mjs`](../scripts/compress-glb.mjs) status stub; [`compress-plates.mjs`](../scripts/compress-plates.mjs) builds OG art, not plate compression; all `useGlb: false`.
-
-**Why bad:** Skill prefers compressed GLB for external assets. Hooks and flags exist; authored/compressed production path does not.
-
-**Fix direction:** Real gltf-transform + meshopt; poly budgets; enable flags only after Lambert normalize (as boat loader).
+**Fix landed:** meshopt compress with per-asset size/tri budgets; plate compression vs OG split; boat + lighthouse `useGlb: true`; girl/pier/desk stay gated until sources exist.
 
 ### P2 — CI builds only
 
@@ -228,38 +222,35 @@ Severity: **P0** ship-blocking cost or correctness · **P1** architecture / draw
 
 **Fix direction:** PR workflow: `format:check` → `lint` → `test` → `build`; keep Pages deploy on green `main`.
 
-### P2 — Ship placeholders
+### P2 — Ship placeholders — resolved (Phase 7)
 
-**Where:** [`src/site.ts`](../src/site.ts) `*.example` CTAs; [`index.html`](../index.html) root-absolute favicon/OG likely wrong under `/winzu-public/`.
-
-**Why bad:** Stakeholder demos look unfinished; meta broken on Pages.
+**Was:** example CTAs; root-absolute favicon under `/winzu-public/`.  
+**Now:** live CTAs in [`src/site.ts`](../src/site.ts); favicon uses `%BASE_URL%`; OG stays absolute to Pages.
 
 ### P3 — Dead or mixed intent
 
-- [`HorizonMist.ts`](../src/scene/sky/HorizonMist.ts) unused
 - Exterior `castShadow` marks with shadow maps disabled
 - Desk embeds a Three graph while `MapHud` is the primary map UI (dual presentation)
-- `document.body.style.cursor` set from desk picker (belongs on canvas/Game layer)
 - Naming: “SceneDirector” is FSM; cinematic direction lives in Exterior + timelines
 
 ---
 
 ## Skill checklist
 
-| Skill rule | Status |
-|------------|--------|
-| Low poly / faceted / stylized | Pass on props; ocean denser than needed |
-| Restrained materials / minimal textures | Pass |
-| Warm directional + cool ambient | Pass |
-| Flat shading where style needs it | Pass (Lambert flat) |
-| Prefer simple geos | Pass on props; fail on ocean segs |
-| Subtle / procedural animation | Pass |
-| No expensive per-frame React state | Warn (marker latch) |
-| 60 / 30+ FPS targets | Unproven; cost stack suggests mobile risk |
-| Minimal draws / instancing / LOD | Partial (markers good; clouds/foam/LOD missing) |
-| Compressed GLB | Fail (stub) |
-| Separate DOM / React / R3F / assets / animation / interaction | Pass with Exterior caveat |
-| Never one scene component | Fail on ExteriorWorld runtime |
+| Skill rule                                                    | Status                                          |
+| ------------------------------------------------------------- | ----------------------------------------------- |
+| Low poly / faceted / stylized                                 | Pass on props; ocean denser than needed         |
+| Restrained materials / minimal textures                       | Pass                                            |
+| Warm directional + cool ambient                               | Pass                                            |
+| Flat shading where style needs it                             | Pass (Lambert flat)                             |
+| Prefer simple geos                                            | Pass on props; fail on ocean segs               |
+| Subtle / procedural animation                                 | Pass                                            |
+| No expensive per-frame React state                            | Warn (marker latch)                             |
+| 60 / 30+ FPS targets                                          | Unproven; cost stack suggests mobile risk       |
+| Minimal draws / instancing / LOD                              | Partial (markers good; clouds/foam/LOD missing) |
+| Compressed GLB                                                | Pass (meshopt + budgets; boat/LH enabled)       |
+| Separate DOM / React / R3F / assets / animation / interaction | Pass with Exterior caveat                       |
+| Never one scene component                                     | Fail on ExteriorWorld runtime                   |
 
 ---
 

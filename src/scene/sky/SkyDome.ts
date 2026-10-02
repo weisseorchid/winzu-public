@@ -25,8 +25,12 @@ void main() {
   { sky: true },
 )
 
-export function createSkyDome(sunDir: THREE.Vector3): THREE.Mesh {
-  const geo = new THREE.SphereGeometry(160, 48, 28)
+export function createSkyDome(
+  sunDir: THREE.Vector3,
+  widthSegs = 32,
+  heightSegs = 18,
+): THREE.Mesh {
+  const geo = new THREE.SphereGeometry(160, widthSegs, heightSegs)
   const mat = new THREE.ShaderMaterial({
     side: THREE.BackSide,
     depthWrite: false,

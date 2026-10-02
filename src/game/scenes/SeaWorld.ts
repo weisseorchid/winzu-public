@@ -1,6 +1,11 @@
 import * as THREE from 'three'
-import { COLORS } from '../../scene/config'
+import {
+  COLORS,
+  type QualityProfile,
+  type SceneRuntime,
+} from '../../scene/config'
 import { LAYOUT_WORLD } from '../../scene/layout'
+import { disposeObject3D } from '../../scene/dispose'
 import { createSkyDome } from '../../scene/sky/SkyDome'
 import { createSunDisc } from '../../scene/sky/SunDisc'
 import {
@@ -9,7 +14,7 @@ import {
 } from '../../scene/ocean/OceanMaterial'
 import { createLightRig } from '../../scene/lighting/LightRig'
 import { createMountains } from '../../scene/bg/Mountains'
-import { createClouds } from '../../scene/bg/Clouds'
+import { createClouds, disposeClouds } from '../../scene/bg/Clouds'
 import { createRock } from '../../scene/props/Rock'
 import { createBuoy } from '../../scene/props/Buoy'
 import { createLighthouse } from '../../scene/props/Lighthouse'
@@ -20,7 +25,11 @@ import {
   createWaterlineFoam,
   type FoamSystem,
 } from '../../scene/foam/Foam'
-import { createPier, createIslandDock, type PierHandle } from '../../scene/props/Pier'
+import {
+  createPier,
+  createIslandDock,
+  type PierHandle,
+} from '../../scene/props/Pier'
 import { createGirl, type GirlHandle } from '../../scene/props/Girl'
 import {
   createMarkerTrail,
@@ -28,7 +37,6 @@ import {
 } from '../../scene/props/MarkerTrail'
 import { createReflectionPass } from '../../scene/reflect/ReflectionPass'
 import { MARKER_POSITIONS } from '../BoatController'
-import type { SceneRuntime } from '../../scene/config'
 
 export type SeaWorldVisuals = {
   root: THREE.Group
@@ -55,20 +63,23 @@ export type SeaWorldVisuals = {
 }
 
 /** Build the shared exterior scenic graph (Scenes 0–2). */
-export function createSeaWorld(runtime: SceneRuntime): SeaWorldVisuals {
+export function createSeaWorld(
+  runtime: SceneRuntime,
+  quality: QualityProfile,
+): SeaWorldVisuals {
   const sunDir = runtime.sunDir
   const root = new THREE.Group()
   root.name = 'ScenicRoot'
 
   const oceanMat = createOceanMaterial(sunDir)
-  const reflection = createReflectionPass(true)
+  const reflection = createReflectionPass(quality.reflectionHalfRes)
 
   const lights = createLightRig(sunDir, runtime.sunIntensity)
-  const sky = createSkyDome(sunDir)
+  const sky = createSkyDome(sunDir, quality.skyWidthSegs, quality.skyHeightSegs)
   const sun = createSunDisc(sunDir)
   const mountains = createMountains(sunDir)
   const clouds = createClouds(sunDir)
-  const ocean = createOceanMesh(oceanMat)
+  const ocean = createOceanMesh(oceanMat, quality.oceanSegments)
 
   const leftRock = createRock({ radius: 2.2, seed: 1.1, sunDir, fog: true })
   const midRock = createRock({ radius: 1.9, seed: 2.4, sunDir, fog: true })
@@ -103,15 +114,7 @@ export function createSeaWorld(runtime: SceneRuntime): SeaWorldVisuals {
   const islandDock = createIslandDock()
   const girl = createGirl()
 
-  reflection.trackHidden(
-    lights,
-    sky,
-    sun,
-    mountains,
-    clouds,
-    ocean,
-    foam.group,
-  )
+  reflection.trackHidden(lights, sky, sun, mountains, clouds, ocean, foam.group)
 
   root.add(
     lights,
@@ -171,4 +174,23 @@ export function createSeaWorld(runtime: SceneRuntime): SeaWorldVisuals {
     oceanMat,
     reflection,
   }
+}
+
+/**
+ * Tear down the exterior scenic graph (geometries, materials, textures, shadow maps).
+ * Reflection RT is owned by ExteriorPost — dispose that separately.
+ */
+export function disposeSeaWorld(visuals: SeaWorldVisuals): void {
+  visuals.root.removeFromParent()
+
+  // Detach handle-owned subtrees so each dispose owns its resources exclusively.
+  visuals.root.remove(visuals.foam.group)
+  visuals.root.remove(visuals.clouds)
+  visuals.root.remove(visuals.boat.group)
+
+  visuals.foam.dispose()
+  disposeClouds(visuals.clouds)
+  visuals.boat.dispose()
+  disposeObject3D(visuals.root)
+  visuals.root.clear()
 }

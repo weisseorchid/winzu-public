@@ -29,7 +29,9 @@ export function resolveComparePlate(): ComparePlate {
   return 'scene1'
 }
 
-export function comparePlateUrl(plate: ComparePlate = resolveComparePlate()): string {
+export function comparePlateUrl(
+  plate: ComparePlate = resolveComparePlate(),
+): string {
   const base = import.meta.env.BASE_URL
   return `${base}${PLATE_FILES[plate]}`
 }

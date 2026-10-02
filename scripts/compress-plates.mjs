@@ -1,37 +1,90 @@
-import sharp from 'sharp'
-import path from 'path'
-import { fileURLToPath } from 'node:url'
-
 /**
- * Generate public/og.png (1200×630) from a local art-direction still.
- * Source lives under assets/idea/ (gitignored); the PNG output is committed.
+ * Compress scene plates for the ?compare overlay.
+ *
+ *   assets/scene_N.png  →  public/plates/scene_N.png
+ *
+ * Keeps PNG for CompareOverlay compatibility. Fails if any plate exceeds
+ * the per-file byte budget after compression.
+ *
+ * Usage: yarn compress-plates
  */
+import { access, mkdir, stat } from 'node:fs/promises'
+import path from 'node:path'
+import { fileURLToPath } from 'node:url'
+import sharp from 'sharp'
+
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const root = path.resolve(__dirname, '..')
-const night = path.join(
-  root,
-  'assets',
-  'idea',
-  'ChatGPT Image 28 sept 2026, 07_34_24.png',
-)
+const srcDir = path.join(root, 'assets')
+const outDir = path.join(root, 'public', 'plates')
 
-const ogBase = await sharp(night)
-  .resize(1200, 630, { fit: 'cover', position: 'centre' })
-  .modulate({ brightness: 0.85 })
-  .toBuffer()
+/** Soft cap so compare plates stay lightweight in Pages deploys. */
+const MAX_BYTES = 500 * 1024
+/** Longest edge — enough for full-bleed compare wipe. */
+const MAX_EDGE = 1280
 
-const svg = Buffer.from(`
-<svg width="1200" height="630" xmlns="http://www.w3.org/2000/svg">
-  <rect x="0" y="460" width="1200" height="170" fill="rgba(22,21,19,0.55)"/>
-  <text x="64" y="545" font-family="Georgia, serif" font-size="72" fill="#f3efe6">Winzu</text>
-  <text x="64" y="590" font-family="Arial, sans-serif" font-size="28" fill="#e6b15a">From paperwork fog to a clear map</text>
-</svg>
-`)
+const PLATES = ['scene_0.png', 'scene_1.png', 'scene_2.png', 'scene_3.png']
 
-const out = path.join(root, 'public', 'og.png')
-await sharp(ogBase)
-  .composite([{ input: svg, top: 0, left: 0 }])
-  .png()
-  .toFile(out)
+async function exists(p) {
+  try {
+    await access(p)
+    return true
+  } catch {
+    return false
+  }
+}
 
-console.log('wrote public/og.png')
+function formatBytes(n) {
+  if (n < 1024) return `${n} B`
+  return `${(n / 1024).toFixed(1)} KB`
+}
+
+await mkdir(outDir, { recursive: true })
+
+console.log('compress-plates: assets/scene_*.png → public/plates/')
+
+let ok = 0
+let failed = 0
+
+for (const name of PLATES) {
+  const srcPath = path.join(srcDir, name)
+  const outPath = path.join(outDir, name)
+
+  if (!(await exists(srcPath))) {
+    console.error(`  ✗ ${name}  missing source`)
+    failed += 1
+    continue
+  }
+
+  try {
+    const before = (await stat(srcPath)).size
+    await sharp(srcPath)
+      .resize({
+        width: MAX_EDGE,
+        height: MAX_EDGE,
+        fit: 'inside',
+        withoutEnlargement: true,
+      })
+      .png({ compressionLevel: 9, palette: true, quality: 70, colors: 128 })
+      .toFile(outPath)
+
+    const after = (await stat(outPath)).size
+    if (after > MAX_BYTES) {
+      console.error(
+        `  ✗ ${name}  ${formatBytes(before)} → ${formatBytes(after)}  BUDGET: > ${formatBytes(MAX_BYTES)}`,
+      )
+      failed += 1
+      continue
+    }
+
+    console.log(`  ✓ ${name}  ${formatBytes(before)} → ${formatBytes(after)}`)
+    ok += 1
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error(`  ✗ ${name}  ${msg}`)
+    failed += 1
+  }
+}
+
+console.log(`done: ${ok} compressed, ${failed} failed`)
+if (failed > 0) process.exit(1)

@@ -47,9 +47,6 @@ export const MARKER_POSITIONS: [number, number, number][] = (() => {
 
 export const MARKERS_TOTAL = MARKER_POSITIONS.length
 
-/** @deprecated Use MARKER_POSITIONS */
-export const WAYPOINT_POSITIONS = MARKER_POSITIONS
-
 export const LIGHTHOUSE_POSITION: [number, number, number] = [lh.x, 0, lh.z]
 export const DOCK_POSITION: [number, number, number] = [
   LAYOUT_WORLD.islandDock.x,

@@ -1,21 +1,38 @@
 import * as THREE from 'three'
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils.js'
 import { COLORS } from '../config'
+import { disposeObject3D } from '../dispose'
 
 export type FoamSystem = {
   group: THREE.Group
   wake: THREE.Group
   updateWake: (boatPos: THREE.Vector3, heading: number) => void
+  dispose: () => void
 }
 
+const foamMatCache = new Map<number, THREE.MeshBasicMaterial>()
+
 function foamMat(opacity = 0.85) {
-  return new THREE.MeshBasicMaterial({
-    color: COLORS.foam,
-    transparent: true,
-    opacity,
-    depthWrite: false,
-    fog: false,
-    toneMapped: true,
-  })
+  const key = Math.round(opacity * 100)
+  let mat = foamMatCache.get(key)
+  if (!mat) {
+    mat = new THREE.MeshBasicMaterial({
+      color: COLORS.foam,
+      transparent: true,
+      opacity,
+      depthWrite: false,
+      fog: false,
+      toneMapped: true,
+    })
+    foamMatCache.set(key, mat)
+  }
+  return mat
+}
+
+/** Drop shared foam materials after a scenic dispose so remounts allocate fresh GPU state. */
+export function clearFoamMatCache(): void {
+  for (const mat of foamMatCache.values()) mat.dispose()
+  foamMatCache.clear()
 }
 
 export function createFoamRing(radius: number): THREE.Mesh {
@@ -27,20 +44,33 @@ export function createFoamRing(radius: number): THREE.Mesh {
   return mesh
 }
 
-export function createWaterlineFoam(radius: number, count = 8): THREE.Group {
-  const g = new THREE.Group()
+/** One merged mesh of waterline patches around a rock/island footprint. */
+export function createWaterlineFoam(radius: number, count = 8): THREE.Mesh {
+  const mat = foamMat(0.28)
+  const geos: THREE.BufferGeometry[] = []
+  const matrix = new THREE.Matrix4()
+  const pos = new THREE.Vector3()
+  const quat = new THREE.Quaternion().setFromEuler(
+    new THREE.Euler(-Math.PI / 2, 0, 0),
+  )
+  const scale = new THREE.Vector3(1, 1, 1)
+
   for (let i = 0; i < count; i++) {
     const a = (i / count) * Math.PI * 2
-    const m = new THREE.Mesh(
-      new THREE.PlaneGeometry(0.32 + (i % 3) * 0.06, 0.08),
-      foamMat(0.28),
-    )
-    m.rotation.x = -Math.PI / 2
-    m.position.set(Math.cos(a) * radius, 0.018, Math.sin(a) * radius)
-    m.renderOrder = 2
-    g.add(m)
+    const w = 0.32 + (i % 3) * 0.06
+    const geo = new THREE.PlaneGeometry(w, 0.08)
+    pos.set(Math.cos(a) * radius, 0.018, Math.sin(a) * radius)
+    matrix.compose(pos, quat, scale)
+    geo.applyMatrix4(matrix)
+    geos.push(geo)
   }
-  return g
+
+  const merged = mergeGeometries(geos, false)
+  for (const g of geos) g.dispose()
+  const mesh = new THREE.Mesh(merged ?? new THREE.BufferGeometry(), mat)
+  mesh.renderOrder = 2
+  mesh.name = 'WaterlineFoam'
+  return mesh
 }
 
 export function createFoamSystem(): FoamSystem {
@@ -78,5 +108,10 @@ export function createFoamSystem(): FoamSystem {
     wake.rotation.y = heading
   }
 
-  return { group, wake, updateWake }
+  const dispose = () => {
+    disposeObject3D(group)
+    clearFoamMatCache()
+  }
+
+  return { group, wake, updateWake, dispose }
 }

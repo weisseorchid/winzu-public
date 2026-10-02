@@ -37,11 +37,7 @@ export function dockPhase(
 }
 
 /** Smoothstep 0→1 within [start, start+dur] of absolute time t. */
-export function segmentProgress(
-  t: number,
-  start: number,
-  dur: number,
-): number {
+export function segmentProgress(t: number, start: number, dur: number): number {
   if (dur <= 0) return t >= start ? 1 : 0
   const u = (t - start) / dur
   if (u <= 0) return 0

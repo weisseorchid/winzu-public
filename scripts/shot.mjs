@@ -42,8 +42,7 @@ async function main() {
   const url = buildUrl()
   await page.goto(url, { waitUntil: 'networkidle', timeout: 120_000 })
   // Let shaders / first frames settle (dock/intro settle a bit longer)
-  const settle =
-    milestone === 'scene0' || milestone === 'intro' ? 3500 : 2500
+  const settle = milestone === 'scene0' || milestone === 'intro' ? 3500 : 2500
   await page.waitForTimeout(settle)
   const out = path.join(outDir, `${milestone}.png`)
   await page.screenshot({ path: out, type: 'png' })

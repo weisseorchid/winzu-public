@@ -184,15 +184,16 @@ export function createOceanMaterial(sunDir: THREE.Vector3): OceanMaterial {
   return mat
 }
 
-export function createOceanMesh(material: THREE.ShaderMaterial): THREE.Mesh {
+export function createOceanMesh(
+  material: THREE.ShaderMaterial,
+  segments: number = OCEAN.segments,
+): THREE.Mesh {
   // Large enough that the far rim sits past the mountain bands — otherwise the
   // triangulated plane edge becomes a jagged fake horizon in front of the mist.
-  const geo = new THREE.PlaneGeometry(480, 480, OCEAN.segments, OCEAN.segments)
+  // Indexed mesh: facets come from latticeNormal in the fragment shader.
+  const geo = new THREE.PlaneGeometry(480, 480, segments, segments)
   geo.rotateX(-Math.PI / 2)
-  // Non-indexed so each triangle can shade flat via dFdx/dFdy
-  const nonIndexed = geo.toNonIndexed()
-  geo.dispose()
-  const mesh = new THREE.Mesh(nonIndexed, material)
+  const mesh = new THREE.Mesh(geo, material)
   // Bias toward −Z so most extent covers the scenic horizon
   mesh.position.set(0, 0, -90)
   mesh.name = 'Ocean'
@@ -236,5 +237,7 @@ export function updateOcean(
     if (img?.width && img?.height) {
       material.uniforms.uReflectRes.value.set(img.width, img.height)
     }
+  } else {
+    material.uniforms.uHasReflect.value = 0
   }
 }

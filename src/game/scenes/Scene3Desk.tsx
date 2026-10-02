@@ -4,7 +4,8 @@ import { Suspense, useEffect, useMemo, useRef } from 'react'
 import * as THREE from 'three'
 import { barNorte, type NodeType } from '../../data/barNorte'
 import { useI18n } from '../../i18n'
-import { PERF, COLORS } from '../../scene/config'
+import { COLORS, resolveQualityProfile } from '../../scene/config'
+import { disposeObject3D } from '../../scene/dispose'
 import {
   createDeskScene,
   setDeskHighlight,
@@ -28,13 +29,6 @@ export type DeskSceneApi = {
   onOpenMap: () => void
   onOpenDoc: (docId: string) => void
   onCloseFocus: () => void
-}
-
-function isMobile() {
-  return (
-    typeof navigator !== 'undefined' &&
-    /Mobi|Android/i.test(navigator.userAgent)
-  )
 }
 
 function DeskGraph({
@@ -163,7 +157,7 @@ function DeskWorld(props: DeskSceneApi) {
     onCloseFocus,
   } = props
 
-  const { camera, gl, size } = useThree()
+  const { camera, gl, size, invalidate } = useThree()
   const desk = useMemo(() => createDeskScene(), [])
   const hoverId = useRef<string | null>(null)
 
@@ -172,13 +166,22 @@ function DeskWorld(props: DeskSceneApi) {
     loadDeskGlb().then((obj) => {
       if (cancelled || !obj) return
       desk.group.add(obj)
+      invalidate()
     })
     return () => {
       cancelled = true
     }
-  }, [desk])
+  }, [desk, invalidate])
+
+  useEffect(
+    () => () => {
+      disposeObject3D(desk.group)
+    },
+    [desk],
+  )
 
   const camBlend = useRef(0)
+  const lookTemp = useRef(new THREE.Vector3())
   const overview = useMemo(
     () => ({
       pos: new THREE.Vector3(0.2, 3.4, 3.8),
@@ -207,7 +210,8 @@ function DeskWorld(props: DeskSceneApi) {
     gl.shadowMap.enabled = true
     gl.shadowMap.type = THREE.PCFSoftShadowMap
     gl.outputColorSpace = THREE.SRGBColorSpace
-  }, [gl])
+    invalidate()
+  }, [gl, invalidate])
 
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -216,6 +220,18 @@ function DeskWorld(props: DeskSceneApi) {
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [onCloseFocus])
+
+  useEffect(
+    () => () => {
+      gl.domElement.style.cursor = 'auto'
+    },
+    [gl],
+  )
+
+  // Focus / selection changes need a fresh frame under demand mode.
+  useEffect(() => {
+    invalidate()
+  }, [deskFocus, selectedId, highlightIds, invalidate])
 
   useFrame((_, dt) => {
     const target = deskFocus ? 1 : 0
@@ -227,15 +243,19 @@ function DeskWorld(props: DeskSceneApi) {
     const focusCam = deskFocus === 'doc' ? docCam : mapCam
     const persp = camera as THREE.PerspectiveCamera
     persp.position.lerpVectors(overview.pos, focusCam.pos, camBlend.current)
-    const look = overview.look.clone().lerp(focusCam.look, camBlend.current)
-    persp.lookAt(look)
+    lookTemp.current.copy(overview.look).lerp(focusCam.look, camBlend.current)
+    persp.lookAt(lookTemp.current)
     persp.fov = THREE.MathUtils.lerp(42, 38, camBlend.current)
     persp.aspect = size.width / Math.max(1, size.height)
     persp.updateProjectionMatrix()
+
+    // Keep demand loop alive while the camera blend settles.
+    if (Math.abs(camBlend.current - target) > 0.001) invalidate()
   })
 
   const onPointerMove = (e: ThreeEvent<PointerEvent>) => {
     e.stopPropagation()
+    invalidate()
     const id = findDeskId(e.object)
     if (hoverId.current && hoverId.current !== id) {
       const prev = desk.pickables.get(hoverId.current as DeskPropId)
@@ -244,14 +264,15 @@ function DeskWorld(props: DeskSceneApi) {
     if (id && id !== hoverId.current) {
       const next = desk.pickables.get(id as DeskPropId)
       setDeskHighlight(next, true)
-      document.body.style.cursor = 'pointer'
+      gl.domElement.style.cursor = 'pointer'
     }
-    if (!id) document.body.style.cursor = 'auto'
+    if (!id) gl.domElement.style.cursor = 'auto'
     hoverId.current = id
   }
 
   const onClick = (e: ThreeEvent<MouseEvent>) => {
     e.stopPropagation()
+    invalidate()
     const id = findDeskId(e.object)
     if (!id) {
       onCloseFocus()
@@ -276,7 +297,8 @@ function DeskWorld(props: DeskSceneApi) {
             )
             hoverId.current = null
           }
-          document.body.style.cursor = 'auto'
+          gl.domElement.style.cursor = 'auto'
+          invalidate()
         }}
         onClick={onClick}
       />
@@ -291,7 +313,7 @@ function DeskWorld(props: DeskSceneApi) {
 }
 
 export function Scene3Desk(props: DeskSceneApi) {
-  const dprMax = isMobile() ? PERF.dprMobile : PERF.dprDesktop
+  const dprMax = useMemo(() => resolveQualityProfile().dprCap, [])
   return (
     <Canvas
       dpr={[1, dprMax]}
@@ -303,7 +325,7 @@ export function Scene3Desk(props: DeskSceneApi) {
         toneMapping: THREE.NeutralToneMapping,
       }}
       style={{ width: '100%', height: '100%' }}
-      frameloop="always"
+      frameloop="demand"
     >
       <Suspense fallback={null}>
         <DeskWorld {...props} />

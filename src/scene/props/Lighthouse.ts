@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { COLORS } from '../config'
+import { disposeObject3D } from '../dispose'
 import { lambertFlat } from '../lighting/LightRig'
 import { createRock } from './Rock'
 
@@ -142,109 +143,7 @@ function createFlag(): THREE.Mesh {
   return mesh
 }
 
-export type LighthouseHandle = {
-  group: THREE.Group
-  lantern: THREE.Mesh
-  flag: THREE.Mesh
-  update: (t: number, lit: boolean) => void
-}
-
-export function createLighthouse(sunDir: THREE.Vector3): LighthouseHandle {
-  const group = new THREE.Group()
-  group.name = 'Lighthouse'
-
-  group.add(createIsland(sunDir))
-
-  const fogOpts = { fog: true as const, sunDir }
-
-  // Tapered 8-sided tower
-  const towerH = 5.2
-  const tower = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.55, 0.95, towerH, 8),
-    lambertFlat(COLORS.tower, fogOpts),
-  )
-  tower.name = 'Tower'
-  tower.position.y = towerH * 0.5 + 0.4
-  group.add(tower)
-
-  // Door facing roughly +Z (camera)
-  const door = new THREE.Mesh(
-    new THREE.PlaneGeometry(0.38, 0.72),
-    lambertFlat(COLORS.rockDark, fogOpts),
-  )
-  door.name = 'TowerDoor'
-  door.position.set(0, 1.05, 0.92)
-  group.add(door)
-
-  // Slit windows with warm emissive glow
-  const slitMat = new THREE.MeshBasicMaterial({
-    color: COLORS.lantern.clone().multiplyScalar(2.2),
-    toneMapped: false,
-  })
-  for (const y of [2.4, 3.6]) {
-    const slit = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.28), slitMat)
-    slit.position.set(0.72, y, 0.35)
-    slit.rotation.y = -0.35
-    slit.name = `TowerWindow_${y === 2.4 ? 1 : 2}`
-    group.add(slit)
-  }
-
-  // Gallery + railing
-  const gallery = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.85, 0.85, 0.12, 8),
-    lambertFlat(COLORS.tower, fogOpts),
-  )
-  gallery.name = 'GalleryPlatform'
-  gallery.position.y = towerH + 0.35
-  group.add(gallery)
-  for (let i = 0; i < 8; i++) {
-    const a = (i / 8) * Math.PI * 2
-    const post = new THREE.Mesh(
-      new THREE.CylinderGeometry(0.025, 0.025, 0.4, 4),
-      lambertFlat(COLORS.rockDark, fogOpts),
-    )
-    post.name = `GalleryRailPost_${i + 1}`
-    post.position.set(Math.cos(a) * 0.78, towerH + 0.55, Math.sin(a) * 0.78)
-    group.add(post)
-  }
-  const rail = new THREE.Mesh(
-    new THREE.TorusGeometry(0.78, 0.02, 4, 8),
-    lambertFlat(COLORS.rockDark, fogOpts),
-  )
-  rail.name = 'GalleryRail'
-  rail.rotation.x = Math.PI / 2
-  rail.position.y = towerH + 0.72
-  group.add(rail)
-
-  // Lantern (HDR emissive for bloom) — unlit ~2.4× so linear luma clears threshold
-  const lanternMat = new THREE.MeshBasicMaterial({
-    color: COLORS.lantern,
-    toneMapped: false,
-  })
-  lanternMat.color.multiplyScalar(4.2)
-  const lantern = new THREE.Mesh(
-    new THREE.CylinderGeometry(0.42, 0.42, 0.7, 8),
-    lanternMat,
-  )
-  lantern.position.y = towerH + 1.05
-  lantern.name = 'Lantern'
-  group.add(lantern)
-
-  // Narrow warm beam + cheap volumetric cone through fog
-  const lanternLight = new THREE.SpotLight(
-    COLORS.lantern,
-    0.7,
-    28,
-    0.28,
-    0.55,
-    1.6,
-  )
-  lanternLight.name = 'LanternLight'
-  lanternLight.position.copy(lantern.position)
-  lanternLight.target.position.set(2.5, lantern.position.y - 1.2, 6)
-  group.add(lanternLight)
-  group.add(lanternLight.target)
-
+function createLanternBeam(lanternY: number): THREE.Mesh {
   const beamLen = 14
   const beam = new THREE.Mesh(
     new THREE.ConeGeometry(2.4, beamLen, 16, 1, true),
@@ -265,7 +164,6 @@ export function createLighthouse(sunDir: THREE.Vector3): LighthouseHandle {
         varying vec2 vUv;
         void main() {
           vUv = uv;
-          // ConeGeometry: tip at +Y, base at -Y after we orient
           vAlong = uv.y;
           gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
         }
@@ -286,19 +184,187 @@ export function createLighthouse(sunDir: THREE.Vector3): LighthouseHandle {
     }),
   )
   beam.name = 'LanternBeam'
-  // Tip at lantern, pointing toward camera-ish (+Z / slightly down)
-  beam.position.set(0.4, lantern.position.y - 0.2, 0.6)
+  beam.position.set(0.4, lanternY - 0.2, 0.6)
   beam.rotation.x = Math.PI / 2 + 0.22
   beam.rotation.z = -0.35
   beam.renderOrder = 5
-  group.add(beam)
+  return beam
+}
+
+function createLanternSpot(lanternPos: THREE.Vector3): THREE.SpotLight {
+  const lanternLight = new THREE.SpotLight(
+    COLORS.lantern,
+    0.7,
+    28,
+    0.28,
+    0.55,
+    1.6,
+  )
+  lanternLight.name = 'LanternLight'
+  lanternLight.position.copy(lanternPos)
+  lanternLight.target.position.set(2.5, lanternPos.y - 1.2, 6)
+  return lanternLight
+}
+
+function findLanternMesh(root: THREE.Object3D): THREE.Mesh | undefined {
+  const named =
+    root.getObjectByName('Lantern') ?? root.getObjectByName('Lantern_Glass')
+  if (named && (named as THREE.Mesh).isMesh) return named as THREE.Mesh
+
+  let found: THREE.Mesh | undefined
+  root.traverse((obj) => {
+    if (found) return
+    const mesh = obj as THREE.Mesh
+    if (mesh.isMesh && /lantern/i.test(mesh.name)) found = mesh
+  })
+  return found
+}
+
+function lanternLocalY(root: THREE.Object3D, lantern: THREE.Mesh): number {
+  root.updateMatrixWorld(true)
+  const world = new THREE.Vector3()
+  lantern.getWorldPosition(world)
+  return root.worldToLocal(world).y
+}
+
+function basicColor(mesh: THREE.Mesh | undefined): THREE.Color | null {
+  if (!mesh?.material) return null
+  const mat = Array.isArray(mesh.material) ? mesh.material[0] : mesh.material
+  if (mat instanceof THREE.MeshBasicMaterial) return mat.color
+  return null
+}
+
+/**
+ * Attach spot / volumetric beam / flag when a GLB (or stripped visual) lacks them.
+ * Anchors to `Lantern` / `Lantern_Glass` when present.
+ */
+export function dressLighthouseVisual(root: THREE.Object3D) {
+  const lantern = findLanternMesh(root)
+  const ly = lantern ? lanternLocalY(root, lantern) : 6.25
+  const lanternPos = new THREE.Vector3(0, ly, 0)
+
+  if (!root.getObjectByName('LanternLight')) {
+    const spot = createLanternSpot(lanternPos)
+    root.add(spot)
+    root.add(spot.target)
+  }
+  if (!root.getObjectByName('LanternBeam')) {
+    root.add(createLanternBeam(ly))
+  }
+  if (!root.getObjectByName('Flag')) {
+    const flag = createFlag()
+    flag.position.set(0, ly + 1.3, 0)
+    root.add(flag)
+  }
+}
+
+export type LighthouseHandle = {
+  group: THREE.Group
+  root: THREE.Group
+  update: (t: number, lit: boolean) => void
+  setVisual: (obj: THREE.Object3D) => void
+}
+
+/**
+ * Procedural lighthouse landmark (island + tower + cottage + lantern FX).
+ * `setVisual` swaps in a GLB and re-dresses missing lantern set pieces.
+ */
+export function createLighthouse(sunDir: THREE.Vector3): LighthouseHandle {
+  const group = new THREE.Group()
+  group.name = 'Lighthouse'
+  const root = new THREE.Group()
+  root.name = 'LighthouseVisual'
+  group.add(root)
+
+  const fogOpts = { fog: true as const, sunDir }
+
+  root.add(createIsland(sunDir))
+
+  // Tapered 8-sided tower
+  const towerH = 5.2
+  const tower = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.55, 0.95, towerH, 8),
+    lambertFlat(COLORS.tower, fogOpts),
+  )
+  tower.name = 'Tower'
+  tower.position.y = towerH * 0.5 + 0.4
+  root.add(tower)
+
+  // Door facing roughly +Z (camera)
+  const door = new THREE.Mesh(
+    new THREE.PlaneGeometry(0.38, 0.72),
+    lambertFlat(COLORS.rockDark, fogOpts),
+  )
+  door.name = 'TowerDoor'
+  door.position.set(0, 1.05, 0.92)
+  root.add(door)
+
+  // Slit windows with warm emissive glow
+  const slitMat = new THREE.MeshBasicMaterial({
+    color: COLORS.lantern.clone().multiplyScalar(2.2),
+    toneMapped: false,
+  })
+  for (const y of [2.4, 3.6]) {
+    const slit = new THREE.Mesh(new THREE.PlaneGeometry(0.14, 0.28), slitMat)
+    slit.position.set(0.72, y, 0.35)
+    slit.rotation.y = -0.35
+    slit.name = `TowerWindow_${y === 2.4 ? 1 : 2}`
+    root.add(slit)
+  }
+
+  // Gallery + railing
+  const gallery = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.85, 0.85, 0.12, 8),
+    lambertFlat(COLORS.tower, fogOpts),
+  )
+  gallery.name = 'GalleryPlatform'
+  gallery.position.y = towerH + 0.35
+  root.add(gallery)
+  for (let i = 0; i < 8; i++) {
+    const a = (i / 8) * Math.PI * 2
+    const post = new THREE.Mesh(
+      new THREE.CylinderGeometry(0.025, 0.025, 0.4, 4),
+      lambertFlat(COLORS.rockDark, fogOpts),
+    )
+    post.name = `GalleryRailPost_${i + 1}`
+    post.position.set(Math.cos(a) * 0.78, towerH + 0.55, Math.sin(a) * 0.78)
+    root.add(post)
+  }
+  const rail = new THREE.Mesh(
+    new THREE.TorusGeometry(0.78, 0.02, 4, 8),
+    lambertFlat(COLORS.rockDark, fogOpts),
+  )
+  rail.name = 'GalleryRail'
+  rail.rotation.x = Math.PI / 2
+  rail.position.y = towerH + 0.72
+  root.add(rail)
+
+  // Lantern (HDR emissive for bloom) — unlit ~2.4× so linear luma clears threshold
+  const lanternMat = new THREE.MeshBasicMaterial({
+    color: COLORS.lantern,
+    toneMapped: false,
+  })
+  lanternMat.color.multiplyScalar(4.2)
+  const lantern = new THREE.Mesh(
+    new THREE.CylinderGeometry(0.42, 0.42, 0.7, 8),
+    lanternMat,
+  )
+  lantern.position.y = towerH + 1.05
+  lantern.name = 'Lantern'
+  root.add(lantern)
+
+  const lanternLight = createLanternSpot(lantern.position.clone())
+  root.add(lanternLight)
+  root.add(lanternLight.target)
+
+  root.add(createLanternBeam(lantern.position.y))
 
   const roof = createPagodaRoof(towerH + 1.45, 0.7, sunDir)
-  group.add(roof)
+  root.add(roof)
 
   const flag = createFlag()
   flag.position.set(0, towerH + 2.35, 0)
-  group.add(flag)
+  root.add(flag)
 
   // Cabin
   const cabin = new THREE.Mesh(
@@ -307,7 +373,7 @@ export function createLighthouse(sunDir: THREE.Vector3): LighthouseHandle {
   )
   cabin.name = 'Cottage'
   cabin.position.set(-1.1, 1.05, 0.2)
-  group.add(cabin)
+  root.add(cabin)
   const cabinRoof = new THREE.Mesh(
     new THREE.ConeGeometry(1.2, 0.55, 4),
     lambertFlat(COLORS.rockDark, fogOpts),
@@ -315,7 +381,7 @@ export function createLighthouse(sunDir: THREE.Vector3): LighthouseHandle {
   cabinRoof.name = 'CottageRoof'
   cabinRoof.position.set(-1.1, 1.85, 0.2)
   cabinRoof.rotation.y = Math.PI / 4
-  group.add(cabinRoof)
+  root.add(cabinRoof)
   const windowMat = new THREE.MeshBasicMaterial({
     color: COLORS.lantern.clone().multiplyScalar(4.0),
     toneMapped: false,
@@ -324,7 +390,7 @@ export function createLighthouse(sunDir: THREE.Vector3): LighthouseHandle {
   win.name = 'CottageWarmWindow'
   win.position.set(-1.1 - 0.81, 1.1, 0.2)
   win.rotation.y = Math.PI / 2
-  group.add(win)
+  root.add(win)
 
   // Fence
   for (let i = 0; i < 5; i++) {
@@ -334,7 +400,7 @@ export function createLighthouse(sunDir: THREE.Vector3): LighthouseHandle {
     )
     p.name = `CottageFencePost_${i + 1}`
     p.position.set(0.6 + i * 0.28, 0.85, 1.1)
-    group.add(p)
+    root.add(p)
   }
   const railF = new THREE.Mesh(
     new THREE.BoxGeometry(1.3, 0.05, 0.05),
@@ -342,23 +408,59 @@ export function createLighthouse(sunDir: THREE.Vector3): LighthouseHandle {
   )
   railF.name = 'CottageFenceRail'
   railF.position.set(1.15, 1.0, 1.1)
-  group.add(railF)
+  root.add(railF)
 
   const update = (t: number, lit: boolean) => {
-    const fm = flag.material as THREE.ShaderMaterial
-    fm.uniforms.uTime.value = t
-    // Unlit clears bloom threshold (~2.4 luma); lit is brighter
-    const intensity = lit ? 6.0 : 4.2
-    ;(lantern.material as THREE.MeshBasicMaterial).color
-      .copy(COLORS.lantern)
-      .multiplyScalar(intensity)
-    windowMat.color.copy(COLORS.lantern).multiplyScalar(lit ? 4.4 : 3.2)
-    slitMat.color.copy(COLORS.lantern).multiplyScalar(lit ? 3.6 : 2.6)
-    lanternLight.intensity = lit ? 2.2 : 1.0
-    const beamMat = beam.material as THREE.ShaderMaterial
-    beamMat.uniforms.uOpacity.value = lit ? 0.2 : 0.1
-    beam.visible = true
+    const flagMesh = root.getObjectByName('Flag') as THREE.Mesh | undefined
+    const flagMat = flagMesh?.material
+    if (flagMat instanceof THREE.ShaderMaterial && flagMat.uniforms?.uTime) {
+      flagMat.uniforms.uTime.value = t
+    }
+
+    const lanternMesh = findLanternMesh(root)
+    const lanternColor = basicColor(lanternMesh)
+    if (lanternColor) {
+      lanternColor.copy(COLORS.lantern).multiplyScalar(lit ? 6.0 : 4.2)
+    }
+
+    const cottageWin = root.getObjectByName('CottageWarmWindow') as
+      | THREE.Mesh
+      | undefined
+    const winColor = basicColor(cottageWin)
+    if (winColor) {
+      winColor.copy(COLORS.lantern).multiplyScalar(lit ? 4.4 : 3.2)
+    }
+
+    for (const name of ['TowerWindow_1', 'TowerWindow_2']) {
+      const slit = root.getObjectByName(name) as THREE.Mesh | undefined
+      const slitColor = basicColor(slit)
+      if (slitColor) {
+        slitColor.copy(COLORS.lantern).multiplyScalar(lit ? 3.6 : 2.6)
+      }
+    }
+
+    const spot = root.getObjectByName('LanternLight') as
+      | THREE.SpotLight
+      | undefined
+    if (spot) spot.intensity = lit ? 2.2 : 1.0
+
+    const beam = root.getObjectByName('LanternBeam') as THREE.Mesh | undefined
+    const beamMat = beam?.material
+    if (beamMat instanceof THREE.ShaderMaterial && beamMat.uniforms?.uOpacity) {
+      beamMat.uniforms.uOpacity.value = lit ? 0.2 : 0.1
+      beam!.visible = true
+    }
   }
 
-  return { group, lantern, flag, update }
+  const setVisual = (obj: THREE.Object3D) => {
+    while (root.children.length) {
+      const child = root.children[0]!
+      root.remove(child)
+      disposeObject3D(child)
+    }
+    root.add(obj)
+    dressLighthouseVisual(root)
+  }
+
+  return { group, root, update, setVisual }
 }

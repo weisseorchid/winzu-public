@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 import { COLORS, SUN_DIR } from '../config'
+import { disposeObject3D } from '../dispose'
 import { lambertFlat, lambertVertexColored } from '../lighting/LightRig'
 
 export type BoatHandle = {
@@ -7,6 +8,7 @@ export type BoatHandle = {
   root: THREE.Group
   update: (t: number, heading: number, reducedMotion?: boolean) => void
   setVisual?: (obj: THREE.Object3D) => void
+  dispose: () => void
 }
 
 type Section = {
@@ -197,8 +199,7 @@ function createHull(): THREE.Mesh {
 
   for (const side of [-1, 1]) {
     const outward = new THREE.Vector3(side * 0.25, 0, 1)
-    const plank =
-      side < 0 ? COLORS.woodLit.clone() : COLORS.wood.clone()
+    const plank = side < 0 ? COLORS.woodLit.clone() : COLORS.wood.clone()
     pushQuad(
       gun(st, side),
       center(st.yGun, proud),
@@ -338,18 +339,56 @@ function createSail(): THREE.Mesh {
   geo.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3))
   geo.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2))
   geo.computeVertexNormals()
-  geo.userData.rest = new Float32Array(positions)
-
-  const mesh = new THREE.Mesh(
-    geo,
-    new THREE.MeshLambertMaterial({
-      vertexColors: true,
-      flatShading: true,
-      side: THREE.DoubleSide,
-      emissive: COLORS.sailLit.clone(),
-      emissiveIntensity: 0.42,
-    }),
+  // Rest pose + billow UV for GPU animation (Lambert may omit `uv` without a map).
+  geo.setAttribute(
+    'restPosition',
+    new THREE.Float32BufferAttribute(new Float32Array(positions), 3),
   )
+  geo.setAttribute(
+    'billowUv',
+    new THREE.Float32BufferAttribute(new Float32Array(uvs), 2),
+  )
+
+  const material = new THREE.MeshLambertMaterial({
+    vertexColors: true,
+    flatShading: true,
+    side: THREE.DoubleSide,
+    emissive: COLORS.sailLit.clone(),
+    emissiveIntensity: 0.42,
+  })
+  material.customProgramCacheKey = () => 'sail-billow-v1'
+  material.onBeforeCompile = (shader) => {
+    shader.uniforms.uBillowTime = { value: 0 }
+    shader.vertexShader = shader.vertexShader
+      .replace(
+        '#include <common>',
+        /* glsl */ `
+#include <common>
+attribute vec3 restPosition;
+attribute vec2 billowUv;
+uniform float uBillowTime;
+`,
+      )
+      .replace(
+        '#include <begin_vertex>',
+        /* glsl */ `
+float across = billowUv.x;
+float along = billowUv.y;
+float wave =
+  sin(uBillowTime * 1.45 + along * 5.0) * sin(along * 3.14159265) +
+  sin(uBillowTime * 2.2 + across * 3.0) * 0.35;
+float amp = wave * across * 0.07;
+vec3 transformed = vec3(
+  restPosition.x - amp * 0.2,
+  restPosition.y,
+  restPosition.z + amp
+);
+`,
+      )
+    material.userData.shader = shader
+  }
+
+  const mesh = new THREE.Mesh(geo, material)
   mesh.name = 'Sail'
   return mesh
 }
@@ -360,9 +399,7 @@ function createJibSail(): THREE.Mesh {
   const lit = COLORS.sailLit
   const hi = COLORS.sailHi
   const positions = new Float32Array([
-    0.06, 2.28, -0.02,
-    0.08, 0.48, 0.02,
-    0.82, 0.43, -0.06,
+    0.06, 2.28, -0.02, 0.08, 0.48, 0.02, 0.82, 0.43, -0.06,
   ])
   const geo = new THREE.BufferGeometry()
   geo.setAttribute('position', new THREE.BufferAttribute(positions, 3))
@@ -370,9 +407,15 @@ function createJibSail(): THREE.Mesh {
     'color',
     new THREE.BufferAttribute(
       new Float32Array([
-        lit.r, lit.g, lit.b,
-        hi.r, hi.g, hi.b,
-        sail.r, sail.g, sail.b,
+        lit.r,
+        lit.g,
+        lit.b,
+        hi.r,
+        hi.g,
+        hi.b,
+        sail.r,
+        sail.g,
+        sail.b,
       ]),
       3,
     ),
@@ -392,28 +435,13 @@ function createJibSail(): THREE.Mesh {
   return mesh
 }
 
-function billowSail(mesh: THREE.Mesh, t: number) {
-  const geo = mesh.geometry
-  const rest = geo.userData.rest as Float32Array | undefined
-  const pos = geo.getAttribute('position') as THREE.BufferAttribute | undefined
-  const uv = geo.getAttribute('uv') as THREE.BufferAttribute | undefined
-  if (!rest || !pos || !uv) return
-  for (let i = 0; i < pos.count; i++) {
-    const across = uv.getX(i)
-    const along = uv.getY(i)
-    const wave =
-      Math.sin(t * 1.45 + along * 5) * Math.sin(along * Math.PI) +
-      Math.sin(t * 2.2 + across * 3) * 0.35
-    const amp = wave * across * 0.07
-    pos.setXYZ(
-      i,
-      rest[i * 3]! - amp * 0.2,
-      rest[i * 3 + 1]!,
-      rest[i * 3 + 2]! + amp,
-    )
+function setSailBillowTime(mesh: THREE.Mesh, t: number) {
+  const mat = mesh.material as THREE.MeshLambertMaterial
+  const shader = mat.userData.shader as
+    { uniforms: { uBillowTime: { value: number } } } | undefined
+  if (shader?.uniforms.uBillowTime) {
+    shader.uniforms.uBillowTime.value = t
   }
-  pos.needsUpdate = true
-  geo.computeVertexNormals()
 }
 
 function spar(
@@ -508,7 +536,10 @@ export function createBoat(): BoatHandle {
     ['MastCollarMid', new THREE.Vector3(0, 1.75, -0.02), 0.055],
     ['MastCollarTop', new THREE.Vector3(0, 2.58, -0.02), 0.05],
   ] as const) {
-    const collar = new THREE.Mesh(new THREE.TorusGeometry(radius, 0.014, 4, 8), ropeMat)
+    const collar = new THREE.Mesh(
+      new THREE.TorusGeometry(radius, 0.014, 4, 8),
+      ropeMat,
+    )
     collar.name = name
     collar.rotation.x = Math.PI / 2
     collar.position.copy(position)
@@ -529,7 +560,11 @@ export function createBoat(): BoatHandle {
   ropeLine('Forestay', mastTop, new THREE.Vector3(0, 0.5, -1.1))
   ropeLine('Backstay', mastTop, new THREE.Vector3(0, 0.65, 0.88))
   ropeLine('PortSheet', SAIL.clew, new THREE.Vector3(-0.38, 0.42, 0.64))
-  ropeLine('StarboardSheet', new THREE.Vector3(0.8, 0.43, -0.06), new THREE.Vector3(0.32, 0.42, 0.65))
+  ropeLine(
+    'StarboardSheet',
+    new THREE.Vector3(0.8, 0.43, -0.06),
+    new THREE.Vector3(0.32, 0.42, 0.65),
+  )
   root.add(rigging)
 
   root.add(createSail())
@@ -573,16 +608,19 @@ export function createBoat(): BoatHandle {
       }
     }
     const sailMesh = root.getObjectByName('Sail') as THREE.Mesh | undefined
-    if (sailMesh) billowSail(sailMesh, reducedMotion ? 0 : t)
+    if (sailMesh) setSailBillowTime(sailMesh, reducedMotion ? 0 : t)
   }
 
   const setVisual = (obj: THREE.Object3D) => {
     while (root.children.length) {
       const child = root.children[0]!
       root.remove(child)
+      disposeObject3D(child)
     }
     root.add(obj)
   }
 
-  return { group, root, update, setVisual }
+  const dispose = () => disposeObject3D(group)
+
+  return { group, root, update, setVisual, dispose }
 }

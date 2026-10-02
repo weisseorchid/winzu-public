@@ -120,10 +120,18 @@ export function createGirl(): GirlHandle {
   )
   belt.position.y = -0.015
   torso.add(belt)
-  const knot = namedMesh('SashKnot', new THREE.IcosahedronGeometry(0.07, 0), sash)
+  const knot = namedMesh(
+    'SashKnot',
+    new THREE.IcosahedronGeometry(0.07, 0),
+    sash,
+  )
   knot.position.set(0.23, -0.01, 0.06)
   torso.add(knot)
-  const sashTail = namedMesh('SashTail', new THREE.ConeGeometry(0.06, 0.44, 4), ribbon)
+  const sashTail = namedMesh(
+    'SashTail',
+    new THREE.ConeGeometry(0.06, 0.44, 4),
+    ribbon,
+  )
   sashTail.position.set(0.29, -0.22, 0.075)
   sashTail.rotation.z = 0.45
   torso.add(sashTail)
@@ -151,14 +159,22 @@ export function createGirl(): GirlHandle {
     const forearm = limb('Forearm', 0.25, 0.052, skin)
     forearm.position.y = -0.34
     arm.add(forearm)
-    const hand = namedMesh('Hand', new THREE.IcosahedronGeometry(0.065, 0), skin)
+    const hand = namedMesh(
+      'Hand',
+      new THREE.IcosahedronGeometry(0.065, 0),
+      skin,
+    )
     hand.position.y = -0.49
     arm.add(hand)
     torso.add(arm)
     armPivots.push(arm)
   }
 
-  const neck = namedMesh('Neck', new THREE.CylinderGeometry(0.07, 0.08, 0.14, 6), skin)
+  const neck = namedMesh(
+    'Neck',
+    new THREE.CylinderGeometry(0.07, 0.08, 0.14, 6),
+    skin,
+  )
   neck.position.y = 1.39
   torso.add(neck)
   const headPivot = new THREE.Group()
@@ -167,11 +183,19 @@ export function createGirl(): GirlHandle {
   const head = namedMesh('Face', new THREE.IcosahedronGeometry(0.15, 1), skin)
   head.scale.set(0.88, 1.08, 0.9)
   headPivot.add(head)
-  const hairCap = namedMesh('HairCap', new THREE.IcosahedronGeometry(0.175, 1), hair)
+  const hairCap = namedMesh(
+    'HairCap',
+    new THREE.IcosahedronGeometry(0.175, 1),
+    hair,
+  )
   hairCap.scale.set(1.03, 0.88, 1.04)
   hairCap.position.set(0, 0.055, 0.015)
   headPivot.add(hairCap)
-  const fringe = namedMesh('HairFringe', new THREE.ConeGeometry(0.11, 0.22, 5), hairLit)
+  const fringe = namedMesh(
+    'HairFringe',
+    new THREE.ConeGeometry(0.11, 0.22, 5),
+    hairLit,
+  )
   fringe.position.set(-0.075, -0.02, -0.12)
   fringe.rotation.x = Math.PI / 2.2
   headPivot.add(fringe)
@@ -197,12 +221,20 @@ export function createGirl(): GirlHandle {
   bow.name = 'HairRibbon'
   bow.position.set(0.03, 0.02, 0.13)
   for (const side of [-1, 1]) {
-    const loop = namedMesh('RibbonLoop', new THREE.ConeGeometry(0.075, 0.2, 4), ribbon)
-    loop.rotation.z = side * Math.PI / 2
+    const loop = namedMesh(
+      'RibbonLoop',
+      new THREE.ConeGeometry(0.075, 0.2, 4),
+      ribbon,
+    )
+    loop.rotation.z = (side * Math.PI) / 2
     loop.position.x = side * 0.08
     bow.add(loop)
   }
-  const ribbonTail = namedMesh('RibbonTail', new THREE.ConeGeometry(0.045, 0.32, 4), ribbon)
+  const ribbonTail = namedMesh(
+    'RibbonTail',
+    new THREE.ConeGeometry(0.045, 0.32, 4),
+    ribbon,
+  )
   ribbonTail.position.set(-0.08, -0.18, 0.025)
   ribbonTail.rotation.z = -0.52
   bow.add(ribbonTail)
@@ -257,7 +289,8 @@ export function createGirl(): GirlHandle {
         armPivots[1]!.rotation.x = swing * 0.55
       }
       hairLocks.forEach((lock, index) => {
-        lock.rotation.z = -0.55 - index * 0.055 + Math.sin(t * 2.2 + index) * 0.09
+        lock.rotation.z =
+          -0.55 - index * 0.055 + Math.sin(t * 2.2 + index) * 0.09
       })
       bow.rotation.z = Math.sin(t * 3.2) * 0.08
     },
