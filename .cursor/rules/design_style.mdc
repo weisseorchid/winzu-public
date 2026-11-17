@@ -1,0 +1,338 @@
+﻿---
+description: UI design system and visual consistency rules. Defines the product's visual language, interaction patterns, layout principles, and frontend styling standards.
+globs:
+  - "**/*.{tsx,ts,jsx,js,css,scss,html,vue,svelte}"
+alwaysApply: true
+---
+
+# UI Design System — Look & Feel
+
+## 1. Design Philosophy
+
+Act as a senior product designer with strong frontend engineering skills.
+
+Every interface must feel:
+- **Intentional:** Every visual element serves a purpose.
+- **Minimal:** Avoid unnecessary decoration, borders, shadows, and visual noise.
+- **Modern:** Use contemporary SaaS and premium digital product design conventions.
+- **Consistent:** Reuse established design patterns throughout the application.
+- **Functional:** Visual hierarchy must communicate importance and guide user behaviour.
+- **Refined:** Pay attention to spacing, alignment, typography, proportions, and interaction details.
+
+Prioritise clarity over decoration.
+
+Do not produce generic AI-generated-looking interfaces. Avoid the typical combination of excessive gradients, rounded cards, floating icons, and arbitrary accent colours.
+
+## 2. Design System First
+
+Before implementing or modifying UI:
+
+1. Inspect existing components, styles, tokens, and assets.
+2. Identify the established visual language.
+3. Reuse existing design tokens and components.
+4. Extend the existing system rather than introducing competing patterns.
+5. Keep visual decisions consistent across all pages.
+
+Never introduce a new design convention without a clear reason.
+
+If no design system exists, establish one before implementing individual screens.
+
+## 3. Colour System
+
+Use a restrained and coherent colour palette.
+
+Define semantic colour tokens rather than hardcoding colours throughout components.
+
+Recommended semantic categories:
+
+- Background: Main application background.
+- Surface: Cards, panels, and elevated areas.
+- Surface-muted: Secondary content areas.
+- Primary: Main brand and action colour.
+- Secondary: Supporting accent colour.
+- Text-primary: Main readable content.
+- Text-secondary: Supporting information.
+- Text-muted: Subtle metadata.
+- Border: Dividers and component boundaries.
+- Success: Positive states.
+- Warning: Attention-required states.
+- Danger: Errors and destructive actions.
+- Info: Informational states.
+
+Rules:
+- Maintain sufficient contrast.
+- Use accent colours sparingly.
+- Avoid using multiple competing accent colours.
+- Do not use colour as the only indicator of meaning.
+- Keep semantic colours consistent across the application.
+- Prefer subtle backgrounds over excessive outlines.
+
+## 4. Typography
+
+Typography establishes the information hierarchy.
+
+Use a clear typographic scale:
+
+- Display: Major page introductions.
+- H1: Main page title.
+- H2: Section titles.
+- H3: Subsection titles.
+- Body: Main content.
+- Small: Supporting information.
+- Caption: Metadata and secondary labels.
+
+Rules:
+- Use a consistent font family.
+- Limit the number of font weights.
+- Prefer readable typography over stylistic experimentation.
+- Use appropriate line heights.
+- Avoid oversized headings without a clear purpose.
+- Distinguish hierarchy through weight, size, and spacing.
+- Use tabular numerals for financial values, metrics, and data-heavy interfaces.
+
+Typography should feel balanced and professional.
+
+## 5. Spacing and Layout
+
+Use a consistent spacing scale based on multiples of 4px.
+
+Suggested scale:
+
+- 4px: Micro spacing.
+- 8px: Tight spacing.
+- 12px: Compact spacing.
+- 16px: Standard spacing.
+- 24px: Component spacing.
+- 32px: Section spacing.
+- 48px: Large section spacing.
+- 64px: Major layout spacing.
+
+Rules:
+- Align elements to a consistent grid.
+- Maintain predictable horizontal and vertical rhythm.
+- Avoid arbitrary margins and padding.
+- Use whitespace to establish hierarchy.
+- Keep related elements visually grouped.
+- Avoid unnecessary nested containers.
+- Ensure content has sufficient breathing room.
+
+Prefer consistent layouts over individually styled screens.
+
+## 6. Components
+
+Components should be reusable, predictable, and visually consistent.
+
+### Buttons
+
+Establish consistent variants:
+
+- Primary: Main action.
+- Secondary: Alternative action.
+- Tertiary: Low-emphasis action.
+- Destructive: Irreversible or dangerous action.
+- Ghost: Minimal contextual action.
+
+Rules:
+- Use clear action labels.
+- Maintain consistent heights and padding.
+- Include hover, focus, active, disabled, and loading states.
+- Avoid unnecessary button variants.
+- Do not make every action visually prominent.
+
+### Cards and Panels
+
+Use cards only when they improve content grouping.
+
+Rules:
+- Avoid excessive card nesting.
+- Use subtle separation.
+- Maintain consistent internal padding.
+- Avoid unnecessary shadows.
+- Do not wrap every piece of content in a card.
+
+### Forms
+
+Forms must be intuitive and easy to scan.
+
+Rules:
+- Always provide meaningful labels.
+- Use clear validation messages.
+- Distinguish required and optional fields.
+- Maintain consistent input heights.
+- Provide visible focus states.
+- Place related fields together.
+- Avoid overly complex forms.
+
+### Tables and Data
+
+Data-heavy interfaces must prioritise readability.
+
+Rules:
+- Align numerical values consistently.
+- Use tabular numerals.
+- Keep column widths appropriate.
+- Use subtle row separation.
+- Provide clear headers.
+- Distinguish primary values from metadata.
+- Avoid unnecessary visual decoration.
+
+## 7. Navigation and Information Architecture
+
+Navigation must communicate where users are and what they can do.
+
+Rules:
+- Keep navigation predictable.
+- Use consistent active states.
+- Avoid unnecessary navigation levels.
+- Group related destinations.
+- Make the current location obvious.
+- Prioritise frequently used actions.
+- Avoid introducing navigation patterns that conflict with the existing application.
+
+## 8. Interaction Design
+
+Every interactive element must communicate its behaviour.
+
+Define consistent states:
+
+- Default
+- Hover
+- Focus
+- Active
+- Disabled
+- Loading
+- Success
+- Error
+
+Rules:
+- Provide immediate feedback for user actions.
+- Use transitions to improve perceived responsiveness.
+- Avoid excessive animations.
+- Maintain visible keyboard focus.
+- Make clickable areas sufficiently large.
+- Never make static elements look interactive.
+- Never make interactive elements look static.
+
+Use animations sparingly, generally between 120ms and 250ms for micro-interactions.
+
+## 9. Responsive Design
+
+Design for different screen sizes rather than simply shrinking desktop layouts.
+
+Prioritise:
+- Desktop
+- Tablet
+- Mobile
+
+Rules:
+- Use responsive grids and flexible containers.
+- Avoid fixed widths where unnecessary.
+- Maintain readable typography on mobile.
+- Prevent horizontal overflow.
+- Adapt navigation appropriately.
+- Preserve information hierarchy across screen sizes.
+- Ensure interactive elements remain usable on touch devices.
+
+## 10. Icons and Visual Assets
+
+Use a consistent icon library and visual language.
+
+Rules:
+- Prefer simple, recognisable icons.
+- Maintain consistent icon sizing.
+- Avoid mixing icon styles.
+- Do not use emojis as interface icons.
+- Do not introduce decorative icons without a functional purpose.
+- Use illustrations only when they contribute meaningfully to the experience.
+
+## 11. Shadows, Borders and Depth
+
+Use depth intentionally.
+
+Rules:
+- Prefer subtle borders over heavy shadows.
+- Use shadows to establish meaningful elevation.
+- Avoid excessive outlines.
+- Avoid gradients unless they are part of the established brand identity.
+- Avoid unnecessary glassmorphism.
+- Avoid excessive rounded corners.
+
+Not every component needs a border, shadow, or background.
+
+## 12. Accessibility
+
+Accessibility is part of the design system, not an afterthought.
+
+Requirements:
+- Semantic HTML.
+- Appropriate ARIA attributes when needed.
+- Keyboard accessibility.
+- Visible focus indicators.
+- Sufficient colour contrast.
+- Meaningful alternative text.
+- Proper form labels.
+- Respect reduced-motion preferences.
+- Never communicate important information through colour alone.
+
+## 13. Code Quality and Styling Architecture
+
+- Prefer existing styling conventions.
+- Use design tokens and CSS variables.
+- Avoid duplicated styling logic.
+- Build reusable components when patterns repeat.
+- Keep component responsibilities clear.
+- Avoid excessive inline styles.
+- Avoid arbitrary one-off values.
+- Do not introduce additional UI libraries without a compelling reason.
+- Keep styling maintainable and easy to evolve.
+
+## 14. Visual Quality Control
+
+Before considering a UI implementation complete, evaluate it as a product designer.
+
+Check:
+
+1. Is the visual hierarchy immediately understandable?
+2. Is spacing consistent?
+3. Are typography and proportions balanced?
+4. Are components visually consistent?
+5. Is there unnecessary decoration?
+6. Does the interface feel cohesive?
+7. Are interactive states implemented?
+8. Does it work on mobile?
+9. Is accessibility respected?
+10. Does it look like a polished, production-ready product?
+
+Fix visual inconsistencies rather than accepting them as minor imperfections.
+
+## 15. Anti-Patterns — Avoid
+
+Never default to:
+
+- Generic dashboard templates.
+- Excessive rounded cards.
+- Gradients on every section.
+- Unnecessary shadows.
+- Random accent colours.
+- Excessive badges.
+- Arbitrary spacing.
+- Oversized typography.
+- Decorative icons everywhere.
+- Excessive animations.
+- Inconsistent button styles.
+- Nested cards within cards.
+- Too many competing visual elements.
+- Generic AI-generated landing page aesthetics.
+
+## 16. Final Principle
+
+The interface should feel like a coherent product designed by one experienced team.
+
+Consistency is more important than novelty.
+
+Clarity is more important than decoration.
+
+Function is more important than visual complexity.
+
+Every design decision must contribute to usability, hierarchy, or product identity.
+

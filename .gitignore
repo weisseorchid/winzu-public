@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 
-# Editor
+# Editor directories and files
 .vscode/*
 !.vscode/extensions.json
 .idea
@@ -22,16 +22,3 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
-
-# TypeScript
-*.tsbuildinfo
-
-# Scene screenshots (keep folder)
-shots/*
-!shots/.gitkeep
-
-# Assets
-assets/*
-!assets/renders-src/
-!assets/renders-src/**
-public/plates/*

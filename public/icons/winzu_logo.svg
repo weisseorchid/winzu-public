@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 140 240" width="140" height="240">
+  <g fill="none" stroke="#FF6B00" stroke-width="3.2" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Top pointed peak & upper curved bar -->
+    <path d="M 16 20 Q 48 26 62 24 L 70 10 L 78 24 Q 92 26 124 20" />
+    <path d="M 56 25 L 84 25" />
+
+    <!-- Second curved bar -->
+    <path d="M 20 38 Q 70 46 120 38" />
+
+    <!-- Third double-lined curved bar -->
+    <path d="M 18 55 Q 70 63 122 55" />
+    <path d="M 20 60 Q 70 68 120 60" />
+
+    <!-- Left and right tapering vertical pillars -->
+    <path d="M 56 25 L 36 182" />
+    <path d="M 84 25 L 106 218" />
+
+    <!-- Asymmetric sweeping bottom double curve -->
+    <path d="M 38 164 Q 36 196 104 206" />
+    <path d="M 36 174 Q 28 206 108 220" />
+  </g>
+</svg>
