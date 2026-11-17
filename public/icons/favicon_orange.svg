@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <g fill="#FF6B00">
+    <!-- Top cap and upper curved bar -->
+    <path d="M 256 98 C 228 98 206 116 202 140 Q 152 136 106 126 L 106 164 Q 256 186 406 164 L 406 126 Q 360 136 310 140 C 306 116 284 98 256 98 Z" />
+    
+    <!-- Middle split curved bar -->
+    <path d="M 106 184 Q 175 194 244 196 L 234 218 Q 168 214 106 204 Z" />
+    <path d="M 406 184 Q 337 194 268 196 L 278 218 Q 344 214 406 204 Z" />
+
+    <!-- Lower curved crossbar -->
+    <path d="M 106 222 Q 256 244 406 222 L 406 254 Q 256 276 106 254 Z" />
+
+    <!-- A-frame legs and horizontal bridge -->
+    <path d="M 182 276 L 232 280 L 210 344 L 302 344 L 280 280 L 330 276 L 392 436 L 336 452 L 314 388 L 198 388 L 176 452 L 120 436 Z" />
+  </g>
+</svg>

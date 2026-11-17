@@ -1,35 +1,31 @@
-import { Game } from './game/Game'
-import { useI18n } from './i18n'
-
-export default function App() {
-  const { locale, t, setLocale } = useI18n()
-
+function App() {
   return (
-    <div className="app-shell game-shell">
-      <header className="topbar">
-        <img
-          className="wordmark"
-          src={`${import.meta.env.BASE_URL}winzu-header-logo-white.svg`}
-          alt={t.brand}
-        />
-        <div className="lang-toggle" role="group" aria-label="Language">
-          <button
-            type="button"
-            className={locale === 'en' ? 'active' : undefined}
-            onClick={() => setLocale('en')}
-          >
-            {t.langToggle.en}
-          </button>
-          <button
-            type="button"
-            className={locale === 'es' ? 'active' : undefined}
-            onClick={() => setLocale('es')}
-          >
-            {t.langToggle.es}
-          </button>
+    <div className="app">
+      <header className="header">
+        <div className="winzu-logo">
+          <img
+            className="winzu-logo__mark"
+            src="/icons/winzu_logo.svg"
+            alt=""
+            width={32}
+            height={55}
+          />
+          <h1 className="winzu-logo__title">
+            <span className="winzu-logo__name">winzu</span>
+            <span className="winzu-logo__tag">projects</span>
+          </h1>
         </div>
       </header>
-      <Game />
+
+      <main className="main">
+        <img
+          className="wip"
+          src="/images/WIP_white.jpg"
+          alt="Work in progress illustration"
+        />
+      </main>
     </div>
   )
 }
+
+export default App
