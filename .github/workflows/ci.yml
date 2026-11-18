@@ -12,7 +12,7 @@ concurrency:
 
 jobs:
   check:
-    name: Lint and format
+    name: Lint, format, and build
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -32,3 +32,6 @@ jobs:
 
       - name: Check formatting
         run: yarn format:check
+
+      - name: Build
+        run: yarn build
