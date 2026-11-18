@@ -15,4 +15,13 @@ export const es: Messages = {
     english: 'English',
     spanish: 'Español',
   },
+  papers: {
+    nav: 'Papers',
+    title: 'Papers',
+    lead: 'Notas y textos largos de winzu.',
+    empty: 'Aún no hay papers publicados.',
+    back: 'Todos los papers',
+    notFoundTitle: 'Paper no encontrado',
+    notFoundBody: 'Ese paper no está en este archivo.',
+  },
 }
