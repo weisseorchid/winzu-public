@@ -1,0 +1,92 @@
+.lang {
+  position: relative;
+}
+
+.lang__trigger {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+}
+
+.lang__trigger:hover,
+.lang__trigger[aria-expanded='true'] {
+  background: var(--bg);
+}
+
+.lang__trigger:focus-visible,
+.lang__item:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.lang__icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.lang__menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 10;
+  min-width: 168px;
+  margin: 0;
+  padding: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  box-shadow: 0 8px 24px rgb(26 26 26 / 8%);
+}
+
+.lang__item {
+  appearance: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  width: 100%;
+  min-height: 36px;
+  margin: 0;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 2px;
+  background: transparent;
+  color: var(--text);
+  font: inherit;
+  font-size: 0.875rem;
+  line-height: 1.2;
+  text-align: start;
+  cursor: pointer;
+  outline: none;
+}
+
+.lang__item:hover {
+  background: var(--bg);
+}
+
+.lang__item[aria-checked='true'] {
+  font-weight: 600;
+}
+
+.lang__item:focus-visible {
+  outline-offset: -2px;
+}
+
+.lang__mark,
+.lang__check {
+  display: block;
+  width: 16px;
+  height: 16px;
+  flex: none;
+}

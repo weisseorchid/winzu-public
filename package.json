@@ -7,11 +7,16 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
     "preview": "vite preview"
   },
   "dependencies": {
+    "i18next": "^27.1.5",
+    "i18next-browser-languagedetector": "^8.3.1",
     "react": "^19.3.1",
-    "react-dom": "^19.3.1"
+    "react-dom": "^19.3.1",
+    "react-i18next": "^18.0.2"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",
@@ -19,6 +24,7 @@
     "@types/react-dom": "^19.3.0",
     "@vitejs/plugin-react": "^6.1.2",
     "oxlint": "^1.90.0",
+    "prettier": "^3.10.1",
     "typescript": "~7.0.2",
     "vite": "^8.3.6"
   }
