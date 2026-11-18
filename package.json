@@ -16,7 +16,8 @@
     "i18next-browser-languagedetector": "^8.3.1",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
-    "react-i18next": "^18.0.2"
+    "react-i18next": "^18.0.2",
+    "web-vitals": "^6.2.3"
   },
   "devDependencies": {
     "@types/node": "^24.19.2",

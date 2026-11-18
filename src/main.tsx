@@ -3,6 +3,9 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.tsx'
 import { initI18n } from './i18n'
+import { initWebVitals } from './webVitals'
+
+initWebVitals()
 
 const root = createRoot(document.getElementById('root')!)
 
