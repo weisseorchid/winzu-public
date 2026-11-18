@@ -1,11 +1,4 @@
-import {
-  onCLS,
-  onFCP,
-  onINP,
-  onLCP,
-  onTTFB,
-  type Metric,
-} from 'web-vitals'
+import { onCLS, onFCP, onINP, onLCP, onTTFB, type Metric } from 'web-vitals'
 
 function reportMetric(metric: Metric): void {
   const value =
