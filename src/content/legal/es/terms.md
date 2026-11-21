@@ -1,48 +1,46 @@
 ---
-title: Condiciones de uso
-updated: 2026-11-21
+title: Términos y Condiciones
+updated: 2025-01-01
 ---
 
-## Qué es este sitio
+## I. Introducción
 
-Winzu Projects es un sitio público estático. Presenta material en progreso de Winzu. En este sitio no hay cuentas, no se suben documentos y no hay un backend de producto en vivo.
+Bienvenido a WINZU, S.L. Al acceder o utilizar nuestro sitio web, aplicaciones o servicios, usted acepta estos Términos y Condiciones. Lea atentamente este documento antes de usar los servicios ofrecidos.
 
-## Aceptación
+## II. Información de la Empresa
 
-Al usar este sitio aceptas estas condiciones. Si no estás de acuerdo, abandona el sitio.
+WINZU, S.L. es una sociedad constituida conforme a la legislación española, inscrita en el Registro Mercantil con número de asiento registral RGE937065312024, con domicilio social en [Dirección].
 
-## Sin cuentas y sin subidas
+## III. Descripción del Servicio
 
-Este sitio no crea cuentas. No acepta archivos, contratos ni registros empresariales personales.
+Ofrecemos una plataforma tecnológica para facilitar la contratación, gestión y análisis de seguros. La plataforma actúa como intermediaria entre el cliente y las aseguradoras, pero no asumimos responsabilidad directa sobre los productos contratados.
 
-## Propiedad intelectual
+## IV. Condiciones de Uso
 
-El nombre Winzu, la marca, las imágenes, el código y los textos de este sitio pertenecen a Winzu o a sus licenciantes. Puedes ver y compartir enlaces a las páginas públicas. No puedes copiar, extraer ni reutilizar los activos o el código para otro producto sin permiso.
+- Debe ser mayor de 18 años para usar nuestros servicios.
+- Se compromete a proporcionar información precisa, actualizada y completa durante el registro o uso del servicio.
+- El uso indebido o fraudulento de la plataforma está estrictamente prohibido.
 
-## Uso aceptable
+## V. Propiedad Intelectual
 
-Usa el sitio como demo pública. No intentes interrumpir el alojamiento, sondear vulnerabilidades más allá de la navegación habitual, ni usar los canales de contacto para spam o abuso.
+Todos los contenidos, marcas, logotipos, textos y gráficos del sitio web son propiedad exclusiva de WINZU, S.L. o de terceros licenciantes. Cualquier reproducción, distribución o uso no autorizado está prohibido.
 
-## Terceros
+## VI. Protección de Datos
 
-El sitio se aloja en GitHub Pages. Los servicios enlazados tienen sus propias condiciones. Winzu no los controla.
+Cumplimos con el Reglamento General de Protección de Datos (RGPD) y la Ley Orgánica de Protección de Datos Personales (LOPD). Puede consultar nuestra Política de Privacidad en el siguiente enlace: [Política de Privacidad](#privacy).
 
-## No es asesoramiento
+## VII. Limitación de Responsabilidad
 
-Nada en este sitio es asesoramiento legal, de seguros, fiscal o financiero.
+No seremos responsables por pérdidas directas, indirectas o daños derivados del uso de nuestra plataforma, salvo en los casos que establece la ley.
 
-## Responsabilidad
+## VIII. Modificaciones
 
-El sitio se ofrece tal cual, con fines de demostración. En la máxima medida permitida por la ley, Winzu no responde por pérdidas derivadas del uso del sitio, de confiar en su contenido o de la disponibilidad de enlaces de terceros.
+Nos reservamos el derecho a modificar estos términos y condiciones en cualquier momento. Cualquier cambio será comunicado en esta página con una fecha de actualización.
 
-## Cambios
+## IX. Ley Aplicable y Jurisdicción
 
-Podemos actualizar estas condiciones. La fecha de «Actualizado» al inicio de esta página indica cuándo entró en vigor la versión actual. Seguir usando el sitio tras un cambio implica aceptar las nuevas condiciones.
+Estos Términos y Condiciones se rigen por la legislación española. Cualquier disputa se someterá a los Juzgados y Tribunales de [Ciudad].
 
-## Contacto
+## X. Contacto
 
-Preguntas sobre estas condiciones: [weisseorchid@gmail.com](mailto:weisseorchid@gmail.com).
-
-## Privacidad
-
-Cómo trata este sitio la información se describe en el [Aviso de privacidad](#privacy).
+Si tiene alguna pregunta sobre estos Términos y Condiciones, contáctenos en: [ignacio.masdeu@outlook.com](mailto:ignacio.masdeu@outlook.com) o al teléfono [648 242 792](tel:648242792).

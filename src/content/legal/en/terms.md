@@ -1,48 +1,46 @@
 ---
-title: Terms of use
-updated: 2026-11-21
+title: Terms and Conditions
+updated: 2025-01-01
 ---
 
-## What this site is
+## I. Introduction
 
-Winzu Projects is a static public site. It presents work-in-progress material from Winzu. There is no account system, no document upload, and no live product backend on this site.
+Welcome to WINZU, S.L. By accessing or using our website, applications, or services, you agree to these Terms and Conditions. Please read this document carefully before using the services offered.
 
-## Acceptance
+## II. Company Information
 
-By using this site you agree to these terms. If you do not agree, leave the site.
+WINZU, S.L. is a company incorporated under Spanish law, registered with the Mercantile Registry under entry number RGE937065312024, with registered office at [Address].
 
-## No accounts and no uploads
+## III. Service Description
 
-This site does not create accounts. It does not accept uploaded files, contracts, or personal business records.
+We provide a technology platform to facilitate the contracting, management, and analysis of insurance. The platform acts as an intermediary between the customer and insurers, and we do not assume direct responsibility for the products contracted.
 
-## Intellectual property
+## IV. Conditions of Use
 
-The Winzu name, branding, imagery, code, and written copy on this site belong to Winzu or its licensors. You may view and share links to the public pages. You may not copy, scrape, or reuse the assets or code for another product without permission.
+- You must be over 18 years of age to use our services.
+- You agree to provide accurate, up-to-date, and complete information during registration or use of the service.
+- Misuse or fraudulent use of the platform is strictly prohibited.
 
-## Acceptable use
+## V. Intellectual Property
 
-Use the site as a public demo. Do not attempt to disrupt hosting, probe for vulnerabilities beyond ordinary browsing, or use the contact channels to send spam or abuse.
+All content, trademarks, logos, texts, and graphics on the website are the exclusive property of WINZU, S.L. or of third-party licensors. Any unauthorized reproduction, distribution, or use is prohibited.
 
-## Third parties
+## VI. Data Protection
 
-The site is hosted on GitHub Pages. Linked services have their own terms. Winzu does not control them.
+We comply with the General Data Protection Regulation (GDPR) and the Spanish Organic Law on Personal Data Protection (LOPD). You may consult our Privacy Policy at the following link: [Privacy Policy](#privacy).
 
-## Not advice
+## VII. Limitation of Liability
 
-Nothing on this site is legal, insurance, tax, or financial advice.
+We will not be liable for direct or indirect losses or damages arising from the use of our platform, except where required by law.
 
-## Liability
+## VIII. Modifications
 
-The site is provided as-is for demonstration. To the fullest extent allowed by law, Winzu is not liable for losses arising from use of the site, reliance on its content, or availability of third-party links.
+We reserve the right to modify these terms and conditions at any time. Any change will be communicated on this page with an update date.
 
-## Changes
+## IX. Governing Law and Jurisdiction
 
-We may update these terms. The “Updated” date at the top of this page shows when the current version took effect. Continued use after a change means you accept the new terms.
+These Terms and Conditions are governed by Spanish law. Any dispute shall be submitted to the Courts and Tribunals of [City].
 
-## Contact
+## X. Contact
 
-Questions about these terms: [weisseorchid@gmail.com](mailto:weisseorchid@gmail.com).
-
-## Privacy
-
-How this site handles information is described in the [Privacy notice](#privacy).
+If you have any questions about these Terms and Conditions, contact us at: [ignacio.masdeu@outlook.com](mailto:ignacio.masdeu@outlook.com) or by phone at [648 242 792](tel:648242792).
