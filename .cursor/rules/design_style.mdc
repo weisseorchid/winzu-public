@@ -94,29 +94,25 @@ Typography should feel balanced and professional.
 
 ## 5. Spacing and Layout
 
-Use a consistent spacing scale based on multiples of 4px.
+Use the project spacing tokens (4px baseline). Prefer `gap` on the parent over stacked child margins.
 
-Suggested scale:
-
-- 4px: Micro spacing.
-- 8px: Tight spacing.
-- 12px: Compact spacing.
-- 16px: Standard spacing.
-- 24px: Component spacing.
-- 32px: Section spacing.
-- 48px: Large section spacing.
-- 64px: Major layout spacing.
+| Token | Value | Use |
+| --- | --- | --- |
+| `--space-1` | 4px | Optical tweaks, icon-to-label, compact menu padding |
+| `--space-2` | 8px | Tight related gaps, control padding |
+| `--space-3` | 12px | Compact control padding, header action gaps |
+| `--space-4` | 16px | Default grouping, shell padding on small screens |
+| `--space-5` | 24px | Component blocks, default shell padding |
+| `--space-6` | 32px | Large component padding, section rhythm |
+| `--space-7` | 48px | Section separation |
+| `--space-8` | 64px | Major layout separation |
 
 Rules:
-- Align elements to a consistent grid.
-- Maintain predictable horizontal and vertical rhythm.
-- Avoid arbitrary margins and padding.
-- Use whitespace to establish hierarchy.
-- Keep related elements visually grouped.
-- Avoid unnecessary nested containers.
-- Ensure content has sufficient breathing room.
-
-Prefer consistent layouts over individually styled screens.
+- Use only these tokens for `margin`, `padding`, and `gap` (and derived layout offsets).
+- Do not invent values such as `10px`, `14px`, `20px`, or `0.4rem` for spacing.
+- Related elements get smaller space; independent regions get larger space.
+- Align to the grid across breakpoints; change which token you use, not the scale.
+- Prefer consistent layouts over individually styled screens.
 
 ## 6. Components
 
@@ -245,19 +241,26 @@ Rules:
 - Do not introduce decorative icons without a functional purpose.
 - Use illustrations only when they contribute meaningfully to the experience.
 
-## 11. Shadows, Borders and Depth
+## 11. Shadows, Borders, Radius and Depth
 
-Use depth intentionally.
+Use depth intentionally. Corner radius is part of the product identity — keep it sharp.
+
+| Token | Value | Use |
+| --- | --- | --- |
+| `--radius-none` | 0 | Flush edges, media, full-bleed surfaces |
+| `--radius-xs` | 2px | Buttons, menu items, compact controls |
+| `--radius-sm` | 4px | Menus, dialogs, small panels |
+| `--radius-md` | 8px | Larger panels only when clearly needed |
+| `--radius-full` | 9999px | Avatars or true pills — use rarely |
 
 Rules:
+- Use radius tokens only; do not hardcode `border-radius`.
+- Radius should grow with component size; do not put large radii on dense controls.
+- When nesting rounded surfaces, keep inner radius ≈ outer radius − padding so curves stay parallel.
 - Prefer subtle borders over heavy shadows.
 - Use shadows to establish meaningful elevation.
-- Avoid excessive outlines.
-- Avoid gradients unless they are part of the established brand identity.
-- Avoid unnecessary glassmorphism.
-- Avoid excessive rounded corners.
-
-Not every component needs a border, shadow, or background.
+- Avoid excessive outlines, glassmorphism, and soft “AI card” rounding.
+- Not every component needs a border, shadow, or background.
 
 ## 12. Accessibility
 
@@ -277,12 +280,12 @@ Requirements:
 ## 13. Code Quality and Styling Architecture
 
 - Prefer existing styling conventions.
-- Use design tokens and CSS variables.
+- Use design tokens and CSS variables — especially `--space-*` and `--radius-*`.
 - Avoid duplicated styling logic.
 - Build reusable components when patterns repeat.
 - Keep component responsibilities clear.
 - Avoid excessive inline styles.
-- Avoid arbitrary one-off values.
+- Avoid arbitrary one-off spacing or radius values.
 - Do not introduce additional UI libraries without a compelling reason.
 - Keep styling maintainable and easy to evolve.
 

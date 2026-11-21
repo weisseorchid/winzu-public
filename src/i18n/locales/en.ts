@@ -13,6 +13,15 @@ export const en = {
     english: 'English',
     spanish: 'Español',
   },
+  legal: {
+    terms: 'Terms',
+    privacy: 'Privacy',
+    close: 'Close',
+    contents: 'Contents',
+    updated: 'Updated',
+    loading: 'Loading…',
+    docsNav: 'Legal documents',
+  },
 }
 
 export type Messages = typeof en
