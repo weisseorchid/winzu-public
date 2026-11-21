@@ -6,8 +6,26 @@
   --text-secondary: #666666;
   --border: #e0dfdc;
   --accent: #ff6b00;
+
+  /* Spacing — 4px baseline */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  /* Corner radius — sharp product identity */
+  --radius-none: 0;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+  --radius-full: 9999px;
+
   --shell-max: 1128px;
-  --shell-pad: 24px;
+  --shell-pad: var(--space-5);
 
   font-family: 'Segoe UI', system-ui, sans-serif;
   line-height: 1.4;
@@ -61,15 +79,21 @@ body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
+  gap: var(--space-4);
   min-height: 58px;
-  padding-block: 10px;
+  padding-block: var(--space-2);
+}
+
+.header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
 }
 
 .winzu-logo {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-3);
   margin: 0;
   height: 44px;
   flex: none;
@@ -109,7 +133,7 @@ body {
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding-block: 32px 48px;
+  padding-block: var(--space-6) var(--space-7);
 }
 
 .main__inner {
@@ -123,17 +147,67 @@ body {
   width: min(100%, 480px);
 }
 
+.site-footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 20;
+  flex: none;
+  background: transparent;
+  pointer-events: none;
+}
+
+.site-footer__inner {
+  display: flex;
+  justify-content: center;
+  padding-block: var(--space-4) var(--space-5);
+}
+
+.site-footer__nav {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+  pointer-events: auto;
+}
+
+.ghost-link {
+  appearance: none;
+  margin: 0;
+  padding: var(--space-1) var(--space-2);
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text-secondary);
+  font: inherit;
+  font-size: 0.875rem;
+  cursor: pointer;
+}
+
+.ghost-link:hover,
+.ghost-link:focus-visible {
+  color: var(--text);
+  outline: none;
+}
+
+.ghost-link:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
 @media (max-width: 640px) {
   :root {
-    --shell-pad: 16px;
+    --shell-pad: var(--space-4);
   }
 
   .header__inner {
     min-height: 51px;
-    padding-block: 6px;
+    padding-block: var(--space-2);
   }
 
   .main {
-    padding-block: 24px 32px;
+    padding-block: var(--space-5) var(--space-6);
+  }
+
+  .site-footer__inner {
+    padding-block: var(--space-3) var(--space-4);
   }
 }

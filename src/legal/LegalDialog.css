@@ -1,0 +1,340 @@
+.legal-dialog {
+  inset: 0;
+  width: min(960px, calc(100vw - var(--space-5)));
+  max-width: 960px;
+  height: min(880px, calc(100vh - var(--space-5)));
+  max-height: calc(100vh - var(--space-5));
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text);
+  box-shadow: 0 var(--space-5) var(--space-8) rgba(26, 26, 26, 0.18);
+}
+
+.legal-dialog::backdrop {
+  background: rgba(26, 26, 26, 0.45);
+}
+
+.legal-sheet {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: var(--surface);
+  border-radius: inherit;
+  overflow: hidden;
+}
+
+.legal-header {
+  flex: none;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.legal-header__main {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-4);
+  padding: var(--space-3) var(--space-4);
+}
+
+.legal-tabs {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.legal-tabs__btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: var(--space-2) var(--space-3);
+  border-radius: var(--radius-full);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.9rem;
+}
+
+.legal-tabs__btn:hover,
+.legal-tabs__btn:focus-visible {
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+}
+
+.legal-tabs__btn.is-active {
+  background: var(--text);
+  color: var(--surface);
+}
+
+.legal-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.legal-close {
+  appearance: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-xs);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  outline: none;
+}
+
+.legal-close:hover,
+.legal-close:focus-visible {
+  background: var(--bg);
+  outline: none;
+}
+
+.legal-close:focus-visible {
+  outline: 2px solid var(--text);
+  outline-offset: 2px;
+}
+
+.legal-close__icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+
+.legal-scroll {
+  flex: 1;
+  min-height: 0;
+  display: grid;
+  grid-template-columns: 12.5rem minmax(0, 1fr);
+  gap: var(--space-5);
+  padding: var(--space-4) var(--space-5) var(--space-6);
+  overflow: auto;
+  scroll-behavior: smooth;
+}
+
+.legal-toc {
+  position: sticky;
+  top: 0;
+  align-self: start;
+  padding-top: var(--space-1);
+}
+
+.legal-toc__label {
+  margin: 0 0 var(--space-2);
+  font-size: 0.7rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-secondary);
+}
+
+.legal-toc ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.legal-toc__btn {
+  appearance: none;
+  width: 100%;
+  text-align: left;
+  border: 0;
+  background: transparent;
+  color: var(--text-secondary);
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xs);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  line-height: 1.35;
+}
+
+.legal-toc__btn:hover,
+.legal-toc__btn:focus-visible {
+  color: var(--text);
+  background: var(--bg);
+  outline: none;
+}
+
+.legal-toc__btn.is-active {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 12%, transparent);
+}
+
+.legal-article {
+  max-width: 68ch;
+  min-width: 0;
+}
+
+.legal-article h1 {
+  margin: 0 0 var(--space-1);
+  font-weight: 700;
+  font-size: clamp(1.5rem, 2.5vw, 2rem);
+  line-height: 1.2;
+  letter-spacing: -0.03em;
+  color: var(--text);
+}
+
+.legal-updated {
+  margin: 0 0 var(--space-5);
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.legal-status {
+  margin: var(--space-4) 0;
+  color: var(--text-secondary);
+}
+
+.legal-status--error {
+  color: var(--accent);
+}
+
+.legal-prose {
+  font-size: 0.95rem;
+  line-height: 1.65;
+  color: var(--text);
+}
+
+.legal-prose h2,
+.legal-prose h3 {
+  scroll-margin-top: var(--space-4);
+  font-weight: 700;
+  line-height: 1.25;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.legal-prose h2 {
+  margin: var(--space-6) 0 var(--space-2);
+  font-size: 1.2rem;
+}
+
+.legal-prose h3 {
+  margin: var(--space-5) 0 var(--space-2);
+  font-size: 1.05rem;
+}
+
+.legal-prose p,
+.legal-prose ul,
+.legal-prose ol {
+  margin: 0 0 var(--space-3);
+}
+
+.legal-prose ul,
+.legal-prose ol {
+  padding-left: var(--space-5);
+}
+
+.legal-prose a {
+  color: var(--accent);
+  text-underline-offset: 0.15em;
+}
+
+.legal-prose a:hover,
+.legal-prose a:focus-visible {
+  color: var(--text);
+  outline: none;
+}
+
+.legal-prose code {
+  font-size: 0.88em;
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-xs);
+  background: var(--bg);
+}
+
+@media (max-width: 720px) {
+  .legal-dialog {
+    width: calc(100vw - var(--space-4));
+    height: calc(100vh - var(--space-4));
+    max-height: calc(100vh - var(--space-4));
+  }
+
+  .legal-header__main {
+    flex-wrap: wrap;
+    padding: var(--space-3) var(--space-4);
+  }
+
+  .legal-scroll {
+    grid-template-columns: 1fr;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-4) var(--space-6);
+  }
+
+  .legal-toc {
+    position: static;
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
+  }
+
+  .legal-toc ul {
+    flex-direction: row;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: var(--space-1);
+    padding-bottom: var(--space-1);
+  }
+
+  .legal-toc__btn {
+    width: auto;
+    white-space: nowrap;
+    font-size: 0.78rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .legal-scroll {
+    scroll-behavior: auto;
+  }
+}
+
+@media print {
+  .header,
+  .main,
+  .site-footer,
+  .legal-header__actions,
+  .legal-toc,
+  .legal-tabs {
+    display: none !important;
+  }
+
+  .legal-dialog {
+    position: static;
+    inset: auto;
+    width: auto;
+    height: auto;
+    max-width: none;
+    max-height: none;
+    margin: 0;
+    border: 0;
+    box-shadow: none;
+  }
+
+  .legal-dialog::backdrop {
+    display: none;
+  }
+
+  .legal-sheet {
+    overflow: visible;
+  }
+
+  .legal-scroll {
+    display: block;
+    overflow: visible;
+    padding: 0;
+  }
+
+  .legal-article {
+    max-width: none;
+  }
+}

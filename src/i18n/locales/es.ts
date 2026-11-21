@@ -15,4 +15,13 @@ export const es: Messages = {
     english: 'English',
     spanish: 'Español',
   },
+  legal: {
+    terms: 'Condiciones',
+    privacy: 'Privacidad',
+    close: 'Cerrar',
+    contents: 'Contenido',
+    updated: 'Actualizado',
+    loading: 'Cargando…',
+    docsNav: 'Documentos legales',
+  },
 }
