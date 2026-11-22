@@ -12,6 +12,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@microsoft/clarity": "^1.0.2",
     "i18next": "^27.1.5",
     "i18next-browser-languagedetector": "^8.3.1",
     "react": "^19.3.1",

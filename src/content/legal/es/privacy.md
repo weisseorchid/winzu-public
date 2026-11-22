@@ -37,11 +37,12 @@ updated: 2025-01-01
 - **Finalidad:** Responder a consultas y proporcionar soporte al cliente.
 - **Base legal:** Ejecución del contrato (art. 6.1.b RGPD) o interés legítimo (art. 6.1.f RGPD) para responder a consultas precontractuales.
 
-### Mejora de la Plataforma (datos anonimizados)
+### Mejora de la Plataforma (Microsoft Clarity)
 
-- **Datos:** Datos de navegación anonimizados (dirección IP anonimizada, tipo de navegador, páginas visitadas).
-- **Finalidad:** Analizar el uso de la plataforma para mejorar su funcionamiento y la experiencia del usuario.
-- **Base legal:** Interés legítimo (art. 6.1.f RGPD).
+- **Datos:** Datos de navegación recogidos por Microsoft Clarity, incluidas páginas visitadas, clics, desplazamientos, grabaciones de sesión, mapas de calor y datos técnicos relacionados (como el tipo de navegador). Clarity puede establecer una cookie de origen para vincular sesiones.
+- **Finalidad:** Analizar cómo se usa el sitio web para mejorar su funcionamiento y la experiencia del usuario.
+- **Base legal:** Consentimiento del interesado (art. 6.1.a RGPD). Clarity solo se activa después de que aceptes las cookies. Puedes retirar el consentimiento en cualquier momento borrando los datos almacenados de este sitio en el navegador, o contactándonos como se indica más abajo.
+- **Proveedor:** Microsoft Clarity (Microsoft Corporation).
 
 ### Videovigilancia (en tiendas físicas)
 
@@ -56,9 +57,9 @@ Los datos marcados con asterisco (\*) en los formularios son obligatorios para l
 
 La legitimación para el tratamiento de sus datos se basa en:
 
-- **Consentimiento del interesado:** Para el registro de usuario, el envío de comunicaciones comerciales y otros tratamientos que requieran consentimiento explícito.
+- **Consentimiento del interesado:** Para el registro de usuario, el envío de comunicaciones comerciales, las cookies de analítica de Microsoft Clarity y otros tratamientos que requieran consentimiento explícito.
 - **Ejecución de un contrato:** Para la gestión de pedidos, la prestación de servicios y la atención al cliente relacionada con un contrato.
-- **Interés legítimo:** Para la mejora de la plataforma (datos anonimizados) y la videovigilancia, siempre que se realice una ponderación adecuada con los derechos de los interesados.
+- **Interés legítimo:** Para la videovigilancia, siempre que se realice una ponderación adecuada con los derechos de los interesados.
 - **Cumplimiento de una obligación legal:** Cuando el tratamiento sea necesario para cumplir con una obligación legal.
 
 ## IV. Comunicaciones de Datos
