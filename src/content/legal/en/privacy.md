@@ -37,11 +37,12 @@ updated: 2025-01-01
 - **Purpose:** Respond to inquiries and provide customer support.
 - **Legal basis:** Performance of a contract (Art. 6.1.b GDPR) or legitimate interest (Art. 6.1.f GDPR) for pre-contractual inquiries.
 
-### Platform Improvement (anonymized data)
+### Platform Improvement (Microsoft Clarity)
 
-- **Data:** Anonymized browsing data (anonymized IP address, browser type, pages visited).
-- **Purpose:** Analyze platform usage to improve its operation and the user experience.
-- **Legal basis:** Legitimate interest (Art. 6.1.f GDPR).
+- **Data:** Browsing data collected by Microsoft Clarity, including pages visited, clicks, scrolls, session recordings, heatmaps, and related technical data (such as browser type). Clarity may set a first-party cookie to link sessions.
+- **Purpose:** Analyze how the website is used so we can improve its operation and the user experience.
+- **Legal basis:** Consent of the data subject (Art. 6.1.a GDPR). Clarity runs only after you accept cookies. You can withdraw consent at any time via **Cookies** in the website footer.
+- **Provider:** Microsoft Clarity (Microsoft Corporation).
 
 ### Video Surveillance (at physical stores)
 
@@ -56,9 +57,9 @@ Data marked with an asterisk (\*) in forms are mandatory for the provision of th
 
 The lawfulness of processing your data is based on:
 
-- **Consent of the data subject:** For user registration, sending commercial communications, and other processing that requires explicit consent.
+- **Consent of the data subject:** For user registration, sending commercial communications, Microsoft Clarity analytics cookies, and other processing that requires explicit consent.
 - **Performance of a contract:** For order management, service provision, and customer support related to a contract.
-- **Legitimate interest:** For platform improvement (anonymized data) and video surveillance, always subject to an appropriate balancing of the rights of data subjects.
+- **Legitimate interest:** For video surveillance, always subject to an appropriate balancing of the rights of data subjects.
 - **Compliance with a legal obligation:** Where processing is necessary to comply with a legal obligation.
 
 ## IV. Disclosure of Data
