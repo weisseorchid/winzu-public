@@ -24,4 +24,12 @@ export const es: Messages = {
     loading: 'Cargando…',
     docsNav: 'Documentos legales',
   },
+  cookies: {
+    title: 'Cookies',
+    body: 'Usamos herramientas de analítica como Microsoft Clarity para ver cómo se usa este sitio (grabaciones de sesión y mapas de calor). Solo se activan si aceptas.',
+    accept: 'Aceptar',
+    reject: 'Rechazar',
+    open: 'Cookies',
+    privacyLink: 'Política de privacidad',
+  },
 }
