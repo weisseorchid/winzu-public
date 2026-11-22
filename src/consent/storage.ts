@@ -1,4 +1,8 @@
-import type { ConsentCategory, ConsentChoice, ConsentPreferences } from './types'
+import type {
+  ConsentCategory,
+  ConsentChoice,
+  ConsentPreferences,
+} from './types'
 
 const STORAGE_KEY = 'winzu.cookieConsent'
 const CATEGORIES = ['analytics'] as const satisfies readonly ConsentCategory[]

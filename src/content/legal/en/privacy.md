@@ -41,7 +41,7 @@ updated: 2025-01-01
 
 - **Data:** Browsing data collected by Microsoft Clarity, including pages visited, clicks, scrolls, session recordings, heatmaps, and related technical data (such as browser type). Clarity may set a first-party cookie to link sessions.
 - **Purpose:** Analyze how the website is used so we can improve its operation and the user experience.
-- **Legal basis:** Consent of the data subject (Art. 6.1.a GDPR). Clarity runs only after you accept cookies. You can withdraw consent at any time via **Cookies** in the website footer.
+- **Legal basis:** Consent of the data subject (Art. 6.1.a GDPR). Clarity runs only after you accept cookies. You can withdraw consent at any time by clearing this site’s stored data in your browser, or by contacting us as described below.
 - **Provider:** Microsoft Clarity (Microsoft Corporation).
 
 ### Video Surveillance (at physical stores)

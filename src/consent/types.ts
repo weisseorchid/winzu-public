@@ -4,9 +4,7 @@ export type ConsentCategory = 'analytics'
 export type ConsentChoice = 'granted' | 'denied'
 
 /** Saved choices per category. Missing categories are treated as undecided. */
-export type ConsentPreferences = Partial<
-  Record<ConsentCategory, ConsentChoice>
->
+export type ConsentPreferences = Partial<Record<ConsentCategory, ConsentChoice>>
 
 /**
  * A third-party (or first-party) tracker gated by a consent category.

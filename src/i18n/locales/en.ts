@@ -27,7 +27,6 @@ export const en = {
     body: 'We use analytics tools such as Microsoft Clarity to see how people use this site (session recordings and heatmaps). They only run if you accept.',
     accept: 'Accept',
     reject: 'Reject',
-    open: 'Cookies',
     privacyLink: 'Privacy policy',
   },
 }

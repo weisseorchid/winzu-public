@@ -24,26 +24,21 @@ function App() {
   const [prefs, setPrefs] = useState<ConsentPreferences | null>(() =>
     getConsentPreferences(),
   )
-  const [cookiePrefsOpen, setCookiePrefsOpen] = useState(false)
 
   useEffect(() => {
     applyConsentPreferences(prefs)
   }, [prefs])
 
-  const showCookieBanner = !hasAnsweredConsent(prefs) || cookiePrefsOpen
-
   function handleAccept() {
     const next = grantAllOptionalConsent()
     setConsentPreferences(next)
     setPrefs(next)
-    setCookiePrefsOpen(false)
   }
 
   function handleReject() {
     const next = denyAllOptionalConsent()
     setConsentPreferences(next)
     setPrefs(next)
-    setCookiePrefsOpen(false)
   }
 
   return (
@@ -95,19 +90,12 @@ function App() {
             >
               {t('legal.terms')}
             </button>
-            <button
-              type="button"
-              className="ghost-link"
-              onClick={() => setCookiePrefsOpen(true)}
-            >
-              {t('cookies.open')}
-            </button>
           </nav>
         </div>
       </footer>
 
       <CookieBanner
-        open={showCookieBanner}
+        open={!hasAnsweredConsent(prefs)}
         onAccept={handleAccept}
         onReject={handleReject}
       />

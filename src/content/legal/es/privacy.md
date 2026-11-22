@@ -41,7 +41,7 @@ updated: 2025-01-01
 
 - **Datos:** Datos de navegación recogidos por Microsoft Clarity, incluidas páginas visitadas, clics, desplazamientos, grabaciones de sesión, mapas de calor y datos técnicos relacionados (como el tipo de navegador). Clarity puede establecer una cookie de origen para vincular sesiones.
 - **Finalidad:** Analizar cómo se usa el sitio web para mejorar su funcionamiento y la experiencia del usuario.
-- **Base legal:** Consentimiento del interesado (art. 6.1.a RGPD). Clarity solo se activa después de que aceptes las cookies. Puedes retirar el consentimiento en cualquier momento mediante **Cookies** en el pie de página del sitio.
+- **Base legal:** Consentimiento del interesado (art. 6.1.a RGPD). Clarity solo se activa después de que aceptes las cookies. Puedes retirar el consentimiento en cualquier momento borrando los datos almacenados de este sitio en el navegador, o contactándonos como se indica más abajo.
 - **Proveedor:** Microsoft Clarity (Microsoft Corporation).
 
 ### Videovigilancia (en tiendas físicas)
